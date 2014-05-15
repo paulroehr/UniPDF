@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import com.unipdf.app.R;
-import com.unipdf.app.models.MainActivityModel;
 import com.unipdf.app.views.MainActivityView;
 
 
@@ -46,7 +45,7 @@ public class MainActivity extends Activity {
         temp.add("5");
         temp.add("6");
 
-        MainActivityModel.getInstance().setPDFs(temp);
+//        LightPDFListModel.getInstance().setPDFs(temp);
     }
 
 

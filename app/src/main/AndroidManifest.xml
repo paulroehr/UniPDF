@@ -18,7 +18,8 @@
         </activity>
         <activity
             android:name="com.unipdf.app.activities.FirstActivity"
-            android:label="@string/title_activity_first" >
+            android:label="@string/title_activity_first"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

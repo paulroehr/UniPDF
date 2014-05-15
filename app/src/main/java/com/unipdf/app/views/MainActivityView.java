@@ -4,15 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.unipdf.app.Main;
 import com.unipdf.app.R;
 import com.unipdf.app.events.Event;
 import com.unipdf.app.events.EventListener;
-import com.unipdf.app.models.MainActivityModel;
+import com.unipdf.app.models.ApplicationModel;
 
 /**
  * Created by schotte on 17.04.14.
@@ -38,8 +36,8 @@ public class MainActivityView extends LinearLayout {
         /**
          * Verknüpfung des EventListeners mit dem DatenModel.
          */
-        mModel = MainActivityModel.getInstance();
-        mModel.addListener(MainActivityModel.ChangeEvent.EVENT_RECEIVED_PDFS, mReceivedPDFsListener);
+        mModel = ApplicationModel.getInstance();
+        mModel.addListener(ApplicationModel.ChangeEvent.EVENT_RECEIVED_PDFS, mReceivedPDFsListener);
 
         /**
          * Registrieren ClickListener mit der Liste.
@@ -48,12 +46,12 @@ public class MainActivityView extends LinearLayout {
     }
 
     public void destroy() {
-        mModel.removeListener(MainActivityModel.ChangeEvent.EVENT_RECEIVED_PDFS, mReceivedPDFsListener);
+        mModel.removeListener(ApplicationModel.ChangeEvent.EVENT_RECEIVED_PDFS, mReceivedPDFsListener);
 
     }
 
     public void initList() {
-        mList.setAdapter(new ArrayAdapter<String>(Main.getAppContext(), R.layout.item_pdfs, mModel.getPDFs()));
+//        mList.setAdapter(new ArrayAdapter<String>(Main.getAppContext(), R.layout.item_pdfs, mModel.getPDFs()));
     }
 
     /**
@@ -83,7 +81,7 @@ public class MainActivityView extends LinearLayout {
         }
     };
 
-    private MainActivityModel mModel;
+    private ApplicationModel mModel;
 
     private IViewListener mViewListener;
     private ListView mList;

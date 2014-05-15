@@ -1,50 +1,92 @@
 package com.unipdf.app.activities;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.unipdf.app.R;
 import com.unipdf.app.fragments.All_List_Frag;
+import com.unipdf.app.fragments.Fav_List_Frag;
+import com.unipdf.app.models.ApplicationModel;
+import com.unipdf.app.services.FileCrawlerService;
+import com.unipdf.app.services.FileReceiver;
+import com.unipdf.app.utils.Helper;
 import com.unipdf.app.vos.LightPDF;
 
-public class FirstActivity extends Activity implements All_List_Frag.ICom_All_List_Frag{
+public class FirstActivity extends Activity
+        implements All_List_Frag.ICom_All_List_Frag,
+        Fav_List_Frag.ICom_Fav_List_Frag {
+    public static final String EXTRA_ALREADY_STARTED = "extraAlreadyStarted";
+
+    private FileReceiver mReceiver;
 
     private All_List_Frag mAlf;
-    private ArrayList<LightPDF> mAllPDFs;
+    private Fav_List_Frag mFlf;
+
+    private boolean mAlreadyStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
 
-        mAllPDFs = new ArrayList<LightPDF>();
-
-        mAllPDFs.add(new LightPDF(null, "Montag"));
-        mAllPDFs.add(new LightPDF(null, "Dienstag"));
-        mAllPDFs.add(new LightPDF(null, "Mittwoch"));
-        mAllPDFs.add(new LightPDF(null, "Donnerstag"));
-        mAllPDFs.add(new LightPDF(null, "Freitag"));
-        mAllPDFs.add(new LightPDF(null, "Samstag"));
+        if(savedInstanceState != null) {
+            mAlreadyStarted = savedInstanceState.getBoolean(EXTRA_ALREADY_STARTED);
+        }
+        else {
+            mAlreadyStarted = false;
+        }
 
         mAlf = new All_List_Frag();
+        mFlf = new Fav_List_Frag();
 
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.all_list_frame__container, mAlf)
+                .replace(R.id.fav_list_frame__container, mFlf)
                 .commit();
-
-        // Service wird erstellt
-        // mIsd wird an Service als Listener übergeben.
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // BroadcastReceiver registrieren
+        IntentFilter filter = new IntentFilter(FileReceiver.ACTION_FIND_PDFS);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        mReceiver = new FileReceiver();
+        registerReceiver(mReceiver, filter);
+
+        if(!mAlreadyStarted) {
+            mAlreadyStarted = true;
+
+            // Service wird gestartet
+            Intent msgIntent = new Intent(this, FileCrawlerService.class);
+            msgIntent.putExtra(FileCrawlerService.KEY_FILE_CRAWLER, FileCrawlerService.ACTION_SEARCH_ALL);
+            startService(msgIntent);
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(EXTRA_ALREADY_STARTED, mAlreadyStarted);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,33 +108,28 @@ public class FirstActivity extends Activity implements All_List_Frag.ICom_All_Li
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public ArrayList<LightPDF> GetAllLightPDFs_All_List_Frag() {
-        return mAllPDFs;
-    }
-
+    //##############################################################################################
+    // All_List_Frag
+    //##############################################################################################
     @Override
     public void onItemShortClick_All_List_Frag(LightPDF _lightPDF, View _v) {
         ///TODO zweite Activity öffnen und PDF übergeben
+    }
 
+    @Override
+    public void onSendCopyList(SparseArray<LightPDF> _CopyList) {
+        Helper.convertSparseToArrayList(_CopyList, ApplicationModel.getInstance().getCopyPDFs());
+        mFlf.addFavsToCurrentCategory(ApplicationModel.getInstance().getCopyPDFs());
+        ApplicationModel.getInstance().clearCopyList();
+    }
+
+
+    //##############################################################################################
+    // Fav_List_frag
+    //##############################################################################################
+    @Override
+    public void onItemShortClick_Fav_List_Frag(LightPDF _lightPDF, View v) {
 
     }
 
-    private IService_Data mIsd = new IService_Data() {
-
-        /**
-         * Teilliste wird vom Service übermittelt nach noch festzulegender Zeit.
-         * @param _List
-         */
-        @Override
-        public void serviceChangeListData(ArrayList<LightPDF> _List) {
-            mAllPDFs.addAll(_List);
-            mAlf.notifyListChange();
-        }
-    };
-
-    // Steht in dem Service
-    public interface IService_Data {
-        void serviceChangeListData(ArrayList<LightPDF> _List);
-    }
 }
