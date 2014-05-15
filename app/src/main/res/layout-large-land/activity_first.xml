@@ -13,7 +13,7 @@
         android:layout_weight="2"
         android:id="@+id/all_list_frame__container">
 
-        </FrameLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="0dp"

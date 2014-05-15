@@ -10,7 +10,6 @@
         <activity
             android:name="com.unipdf.app.activities.MainActivity"
             android:label="@string/app_name" >
-
         </activity>
         <activity
             android:name="com.unipdf.app.activities.PdfActivity"
@@ -26,6 +25,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.unipdf.app.services.FileCrawlerService"
+            android:exported="false" >
+        </service>
+
+        <receiver
+            android:name="com.unipdf.app.services.FileReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
     </application>
 
 </manifest>
