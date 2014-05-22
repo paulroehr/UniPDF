@@ -18,7 +18,6 @@ public class Main extends Application {
 
         mAppContext = this;
 
-
     }
 
     public static Application getAppContext() {

@@ -4,7 +4,12 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
     android:background="?android:attr/activatedBackgroundIndicator"
+    android:minHeight="56dp"
     >
 
     <ImageView
@@ -12,7 +17,8 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_launcher"
         android:layout_gravity="center"
-        android:id="@+id/item_imageView" />
+        android:id="@+id/item_imageView"
+        android:layout_marginRight="4dp"/>
 
     <TextView
         android:layout_width="wrap_content"

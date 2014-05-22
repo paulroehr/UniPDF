@@ -48,7 +48,7 @@ public class Categories_List_Adapt extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return mItems.get(position).getId();
+        return 0;
     }
 
     @Override
@@ -66,9 +66,8 @@ public class Categories_List_Adapt extends BaseAdapter {
             holder = (ViewHolder) row.getTag();
         }
 
-//        holder.mImage.setImageURI(mLightPDFs.get(i).getmPicture());
-        holder.mName.setText((CharSequence) mItems.get(position).getFavName());
-
+        holder.mImage.setVisibility(View.VISIBLE);
+        holder.mName.setText(mItems.get(position).getFavName());
 
         return row;
     }

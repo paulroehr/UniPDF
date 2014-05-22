@@ -22,7 +22,8 @@
         <activity
             android:name="com.unipdf.app.activities.FirstActivity"
             android:label="@string/title_activity_first"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

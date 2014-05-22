@@ -74,8 +74,8 @@ public class ApplicationModel extends EventDispatcher {
         mCopyPDFs = new ArrayList<LightPDF>();
         mCategories = new ArrayList<Categories>();
 
-        mCategories.add(new Categories(null, "Action", 0, null));
-        mCategories.add(new Categories(null, "Drama", 1, null));
+        mCategories.add(new Categories(new ArrayList<LightPDF>(), "Action", 0, null));
+        mCategories.add(new Categories(new ArrayList<LightPDF>(), "Drama", 1, null));
     }
 
     private static ApplicationModel ourInstance = null;
