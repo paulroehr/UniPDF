@@ -6,11 +6,16 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.unipdf.app.utils.PDFFinder;
 import com.unipdf.app.vos.LightPDF;
+
+import java.io.File;
+import java.util.ArrayList;
 
 
 public class FileCrawlerService extends IntentService {
 
+    public static final String LOG_TAG = FileCrawlerService.class.getSimpleName();
     public static final String KEY_FILE_CRAWLER = "keyFileCrawler";
 
     public static final String ACTION_SEARCH_ALL = "actionSearchAll";
@@ -20,6 +25,7 @@ public class FileCrawlerService extends IntentService {
     public FileCrawlerService() {
         super("FileCrawlerService");
     }
+    private PDFFinder mFinder;
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -29,41 +35,37 @@ public class FileCrawlerService extends IntentService {
             String action = intent.getStringExtra(KEY_FILE_CRAWLER);
             if(action.equals(ACTION_SEARCH_ALL)) {
 
-                SystemClock.sleep(5000);
-                LightPDF temp = new LightPDF(null, "Sonntag");
+                mFinder = new PDFFinder();
+                mFinder.setListener(new PDFFinder.IPDFFinderListener() {
+                    @Override
+                    public void onProgress(ArrayList<File> _Files) {
+                        ArrayList<LightPDF> list = new ArrayList<LightPDF>();
 
-                Log.d("Service", "5 Sekunden um");
+                        for (File file : _Files) {
+                            list.add(new LightPDF(null, file.getName()));
+                        }
 
-                Intent broadcastIntent = new Intent();
-                broadcastIntent.setAction(FileReceiver.ACTION_FIND_PDFS);
-                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                broadcastIntent.putExtra(PARAM_SEND_PDFS, temp);
-                sendBroadcast(broadcastIntent);
+                        Intent broadcastIntent = new Intent();
+                        broadcastIntent.setAction(FileReceiver.ACTION_FIND_PDFS);
+                        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                        broadcastIntent.putExtra(PARAM_SEND_PDFS, list);
+                        sendBroadcast(broadcastIntent);
+                        mFinder.clearPdfList();
+                    }
 
-                SystemClock.sleep(5000);
-                temp = new LightPDF(null, "Sehr bald");
+                    @Override
+                    public void onFinish() {
+                        stopSelf();
+                    }
+                });
 
-                Log.d("Service", "5 Sekunden um");
+                Log.d(LOG_TAG, "Finde Start");
+                mFinder.execute();
 
-                broadcastIntent.setAction(FileReceiver.ACTION_FIND_PDFS);
-                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                broadcastIntent.putExtra(PARAM_SEND_PDFS, temp);
-                sendBroadcast(broadcastIntent);
-
-                SystemClock.sleep(5000);
-                temp = new LightPDF(null, "Sehr bald123");
-
-                Log.d("Service", "5 Sekunden um");
-
-                broadcastIntent.setAction(FileReceiver.ACTION_FIND_PDFS);
-                broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                broadcastIntent.putExtra(PARAM_SEND_PDFS, temp);
-                sendBroadcast(broadcastIntent);
             }
 
         }
 
-        stopSelf();
     }
 
 

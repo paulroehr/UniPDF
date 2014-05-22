@@ -1,8 +1,9 @@
-package com.unipdf.app.adapter;
+package com.unipdf.app.utils;
 
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Parcel;
+import android.util.Log;
 
 import com.unipdf.app.vos.LightPDF;
 
@@ -22,10 +23,19 @@ import java.util.Stack;
 
 public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>{
 
+    public interface IPDFFinderListener {
+        void onProgress(ArrayList<File> _Files);
+        void onFinish();
+    }
+
+    public static final String LOG_TAG = PDFFinder.class.getSimpleName();
+
+    private IPDFFinderListener mListener;
+
     private ArrayList<File> mPDFList;
     private Stack<File> mDirectories;
 
-    private File mDataDir;
+//    private File mDataDir;
     private File mDownloadCacheDir;
 
     private File mCurrentDir;
@@ -34,14 +44,14 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
 
     private int mMaxSizeOfPdfList;
 
-    private final int DEFAULT_MAX_SIZE = 25;
+    private final int DEFAULT_MAX_SIZE = 10;
 
     public PDFFinder() {
         mPDFList = new ArrayList<File>();
         mDirectories = new Stack<File>();
 
 
-        mDataDir = Environment.getDataDirectory();
+//        mDataDir = Environment.getDataDirectory();
         mExternal = Environment.getExternalStorageDirectory();
 
         mMaxSizeOfPdfList = DEFAULT_MAX_SIZE;
@@ -52,10 +62,15 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         mDirectories = new Stack<File>();
 
 
-        mDataDir = Environment.getDataDirectory();
+        // Wird nicht verwendet da normaler User kein Zugriff hat
+//        mDataDir = Environment.getDataDirectory();
         mExternal = Environment.getExternalStorageDirectory();
 
         mMaxSizeOfPdfList = _SizeOfPdfList;
+    }
+
+    public void setListener(IPDFFinderListener _Listener) {
+        mListener = _Listener;
     }
 
     @Override
@@ -68,20 +83,27 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
     @Override
     protected void onProgressUpdate(ArrayList<File>... values) {
         super.onProgressUpdate(values[0]);
+        mListener.onProgress(values[0]);
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<File> files) {
+        super.onPostExecute(files);
+        mListener.onFinish();
     }
 
     private void traverseDirs() {
-        if (mDataDir.isDirectory() && (mDataDir != null)) {
-            mDirectories.push(mDataDir);
-        }
+//        if (mDataDir.isDirectory() && (mDataDir != null)) {
+//            mDirectories.push(mDataDir);
+//        }
 
-        if ( mExternal.isDirectory() && (mExternal
-                 != null)) {
-            mDirectories.push(mDataDir);
+        if ( (mExternal != null) && mExternal.isDirectory() ) {
+            mDirectories.push(mExternal);
         }
 
         while (!mDirectories.isEmpty()) {
-            traversePath(mDirectories.pop());
+            File temp = mDirectories.pop();
+            traversePath(temp);
         }
     }
 
@@ -91,14 +113,16 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
             throw new IllegalArgumentException();
         }
         File[] fileList = _Directory.listFiles();
+        if(fileList == null)
+            return;
         for (File F: fileList) {
 
             if ( F.isDirectory() ) {
                 mDirectories.push(F);
             }
             else if (F.isFile()) {
-                F.getName().matches(".*\\.pdf");
-                mPDFList.add(F);
+                if(F.getName().matches(".*\\.pdf"))
+                    mPDFList.add(F);
 
                 if (getSizeOfPdfList() >= mMaxSizeOfPdfList) {
                     onProgressUpdate(mPDFList);

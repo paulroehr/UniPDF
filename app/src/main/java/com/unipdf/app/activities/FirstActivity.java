@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,9 @@ import com.unipdf.app.vos.LightPDF;
 public class FirstActivity extends Activity
         implements All_List_Frag.ICom_All_List_Frag,
         Fav_List_Frag.ICom_Fav_List_Frag {
+
+    private static final String LOG_TAG = FirstActivity.class.getSimpleName();
+
     public static final String EXTRA_ALREADY_STARTED = "extraAlreadyStarted";
 
     private FileReceiver mReceiver;
@@ -52,6 +57,10 @@ public class FirstActivity extends Activity
                 .replace(R.id.all_list_frame__container, mAlf)
                 .replace(R.id.fav_list_frame__container, mFlf)
                 .commit();
+
+        Log.d(LOG_TAG, "Data: "+Environment.getDataDirectory().getAbsolutePath());
+        Log.d(LOG_TAG, "External: "+Environment.getExternalStorageDirectory().getAbsolutePath());
+
 
     }
 

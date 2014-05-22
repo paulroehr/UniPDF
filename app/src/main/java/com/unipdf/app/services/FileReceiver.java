@@ -21,10 +21,8 @@ public class FileReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // Daten aus Intent rausholen
 
-        LightPDF temp = intent.getParcelableExtra(FileCrawlerService.PARAM_SEND_PDFS);
-
-        ArrayList<LightPDF> tempList = new ArrayList<LightPDF>();
-        tempList.add(temp);
+        ArrayList<LightPDF> tempList = intent.getParcelableArrayListExtra(FileCrawlerService.PARAM_SEND_PDFS);
+        tempList.addAll(tempList);
         ApplicationModel.getInstance().addPDFs(tempList);
 
         Log.d("Receiver", "Daten empfangen");

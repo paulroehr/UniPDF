@@ -74,14 +74,6 @@ public class ApplicationModel extends EventDispatcher {
         mCopyPDFs = new ArrayList<LightPDF>();
         mCategories = new ArrayList<Categories>();
 
-        mPDFs.add(new LightPDF(null, "Montag"));
-        mPDFs.add(new LightPDF(null, "Dienstag"));
-        mPDFs.add(new LightPDF(null, "Mittwoch"));
-        mPDFs.add(new LightPDF(null, "Donnerstag"));
-        mPDFs.add(new LightPDF(null, "Freitag"));
-        mPDFs.add(new LightPDF(null, "Samstag"));
-
-
         mCategories.add(new Categories(null, "Action", 0, null));
         mCategories.add(new Categories(null, "Drama", 1, null));
     }
