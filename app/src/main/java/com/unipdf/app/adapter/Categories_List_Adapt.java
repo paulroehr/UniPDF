@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.unipdf.app.R;
-import com.unipdf.app.vos.Categories;
+import com.unipdf.app.vos.Category;
 
 import java.util.ArrayList;
 
@@ -29,9 +29,9 @@ public class Categories_List_Adapt extends BaseAdapter {
     }
 
     private Context mContext;
-    private ArrayList<Categories> mItems;
+    private ArrayList<Category> mItems;
 
-    public Categories_List_Adapt(Context _context, ArrayList<Categories> _Items) {
+    public Categories_List_Adapt(Context _context, ArrayList<Category> _Items) {
         mItems = _Items;
         mContext = _context;
     }
@@ -42,7 +42,7 @@ public class Categories_List_Adapt extends BaseAdapter {
     }
 
     @Override
-    public Categories getItem(int position) {
+    public Category getItem(int position) {
         return mItems.get(position);
     }
 
@@ -67,7 +67,7 @@ public class Categories_List_Adapt extends BaseAdapter {
         }
 
         holder.mImage.setVisibility(View.VISIBLE);
-        holder.mName.setText(mItems.get(position).getFavName());
+        holder.mName.setText(mItems.get(position).getCategoryName());
 
         return row;
     }

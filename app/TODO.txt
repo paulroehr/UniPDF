@@ -1,0 +1,2 @@
+- Shortclick auf PDF öffnet nächste Activity
+- DataManager

@@ -3,13 +3,14 @@
 
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
-
     <string name="app_name">TestApp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_favs">Favoriten hinzufügen</string>
+    <string name="action_delete_favs">Favoriten löschen</string>
     <string name="title_activity_pdf">MainActivity</string>
     <string name="title_activity_first">FirstActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_workbench">WorkbenchActivity</string>
 
 </resources>

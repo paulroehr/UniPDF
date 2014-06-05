@@ -3,6 +3,7 @@ package com.unipdf.app.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.util.SparseArray;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -41,10 +42,33 @@ public class Helper {
         }
     }
 
+    public static void showKeyboard(Activity _activity) {
+        InputMethodManager inputMethodManager=(InputMethodManager)_activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(_activity.getCurrentFocus().getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    public static void showKeyboard(Activity _activity, View _view) {
+        InputMethodManager inputMethodManager=(InputMethodManager) _activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(_view, 0);
+    }
+
+    public static void hideKeyboard(Activity _activity, View _view) {
+        InputMethodManager inputMethodManager=(InputMethodManager) _activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(_view.getWindowToken(), 0);
+    }
+
     //showToast-------------------------------------------------------------------------------------
     public static void showToast(Activity _Activity, String _message)
     {
         Toast.makeText(_Activity, _message, Toast.LENGTH_SHORT).show();
+    }
+
+    //showToast-------------------------------------------------------------------------------------
+    public static void showPositionedToast(Activity _Activity, String _message, int _Gravity)
+    {
+        Toast toast = Toast.makeText(_Activity, _message, Toast.LENGTH_SHORT);
+        toast.setGravity(_Gravity, 0, 120);
+        toast.show();
     }
 
 }

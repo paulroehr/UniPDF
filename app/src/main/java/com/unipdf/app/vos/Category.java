@@ -9,24 +9,22 @@ import java.util.ArrayList;
 /**
  * Created by schotte on 06.05.14.
  */
-public class Categories implements Parcelable {
+public class Category implements Parcelable {
 
     private ArrayList<LightPDF> mLightPDFs = null;
-    private String mFavName;
+    private String mCategoryName;
     private int mId;
     private Uri mPicture;
 
-
-
-    public Categories(ArrayList<LightPDF> mLightPDFs, String mFavName, int mId, Uri mPicture) {
-        this.mLightPDFs = mLightPDFs;
-        this.mFavName = mFavName;
-        this.mId = mId;
-        this.mPicture = mPicture;
+    public Category(ArrayList<LightPDF> _LightPDFs, String _CategoryName, int _Id, Uri _Picture) {
+        mLightPDFs = _LightPDFs;
+        mCategoryName = _CategoryName;
+        mId = _Id;
+        mPicture = _Picture;
     }
 
-    public Categories(Parcel _In) {
-        mFavName = _In.readString();
+    public Category(Parcel _In) {
+        mCategoryName = _In.readString();
         _In.readTypedList(mLightPDFs, LightPDF.CREATOR);
         mId = _In.readInt();
         mPicture = _In.readParcelable(Uri.class.getClassLoader());
@@ -40,12 +38,12 @@ public class Categories implements Parcelable {
         this.mLightPDFs = mLightPDFs;
     }
 
-    public String getFavName() {
-        return mFavName;
+    public String getCategoryName() {
+        return mCategoryName;
     }
 
-    public void setFavName(String mFavName) {
-        this.mFavName = mFavName;
+    public void setCategoryName(String mFavName) {
+        this.mCategoryName = mFavName;
     }
 
     public int getId() {
@@ -85,20 +83,20 @@ public class Categories implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mFavName);
+        dest.writeString(mCategoryName);
         dest.writeTypedList(mLightPDFs);
         dest.writeInt(mId);
         dest.writeParcelable(mPicture, PARCELABLE_WRITE_RETURN_VALUE);
     }
 
-    public static final Parcelable.Creator<Categories> CREATOR
-            = new Parcelable.Creator<Categories>() {
-        public Categories createFromParcel(Parcel in) {
-            return new Categories(in);
+    public static final Parcelable.Creator<Category> CREATOR
+            = new Parcelable.Creator<Category>() {
+        public Category createFromParcel(Parcel in) {
+            return new Category(in);
         }
 
-        public Categories[] newArray(int size) {
-            return new Categories[size];
+        public Category[] newArray(int size) {
+            return new Category[size];
         }
     };
 }

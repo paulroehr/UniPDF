@@ -3,6 +3,7 @@ package com.unipdf.app.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -42,7 +43,7 @@ public class FileCrawlerService extends IntentService {
                         ArrayList<LightPDF> list = new ArrayList<LightPDF>();
 
                         for (File file : _Files) {
-                            list.add(new LightPDF(null, file.getName()));
+                            list.add(new LightPDF(null, file.getName(), Uri.fromFile(file)));
                         }
 
                         Intent broadcastIntent = new Intent();
@@ -59,7 +60,6 @@ public class FileCrawlerService extends IntentService {
                     }
                 });
 
-                Log.d(LOG_TAG, "Finde Start");
                 mFinder.execute();
 
             }

@@ -24,7 +24,5 @@ public class FileReceiver extends BroadcastReceiver {
         ArrayList<LightPDF> tempList = intent.getParcelableArrayListExtra(FileCrawlerService.PARAM_SEND_PDFS);
         tempList.addAll(tempList);
         ApplicationModel.getInstance().addPDFs(tempList);
-
-        Log.d("Receiver", "Daten empfangen");
     }
 }

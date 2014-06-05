@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.unipdf.app.events.EventDispatcher;
 import com.unipdf.app.events.SimpleEvent;
-import com.unipdf.app.vos.Categories;
+import com.unipdf.app.vos.Category;
 import com.unipdf.app.vos.LightPDF;
 
 /**
@@ -49,11 +49,11 @@ public class ApplicationModel extends EventDispatcher {
     }
 
     //##############################################################################################
-    public ArrayList<Categories> getCategories() {
+    public ArrayList<Category> getCategories() {
         return mCategories;
     }
 
-    public void setCategories(ArrayList<Categories> mCategories) {
+    public void setCategories(ArrayList<Category> mCategories) {
         this.mCategories = mCategories;
     }
 
@@ -72,14 +72,14 @@ public class ApplicationModel extends EventDispatcher {
     private ApplicationModel() {
         mPDFs = new ArrayList<LightPDF>();
         mCopyPDFs = new ArrayList<LightPDF>();
-        mCategories = new ArrayList<Categories>();
+        mCategories = new ArrayList<Category>();
 
-        mCategories.add(new Categories(new ArrayList<LightPDF>(), "Action", 0, null));
-        mCategories.add(new Categories(new ArrayList<LightPDF>(), "Drama", 1, null));
+        mCategories.add(new Category(new ArrayList<LightPDF>(), "Action", 0, null));
+        mCategories.add(new Category(new ArrayList<LightPDF>(), "Drama", 1, null));
     }
 
     private static ApplicationModel ourInstance = null;
     private ArrayList<LightPDF> mPDFs;
     private ArrayList<LightPDF> mCopyPDFs;
-    private ArrayList<Categories> mCategories;
+    private ArrayList<Category> mCategories;
 }

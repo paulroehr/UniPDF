@@ -11,19 +11,19 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.unipdf.app.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.unipdf.app.activities.PdfActivity"
+            android:name=".activities.PdfActivity"
             android:label="@string/title_activity_pdf"
-            android:parentActivityName="com.unipdf.app.activities.MainActivity" >
+            android:parentActivityName=".activities.MainActivity" >
         </activity>
         <activity
-            android:name="com.unipdf.app.activities.FirstActivity"
-            android:label="@string/title_activity_first"
+            android:name=".activities.ExplorerActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden">
+            android:label="@string/title_activity_first"
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,15 +32,24 @@
         </activity>
 
         <service
-            android:name="com.unipdf.app.services.FileCrawlerService"
+            android:name=".services.FileCrawlerService"
             android:exported="false" >
         </service>
 
         <receiver
-            android:name="com.unipdf.app.services.FileReceiver"
+            android:name=".services.FileReceiver"
             android:enabled="true"
             android:exported="true" >
         </receiver>
+
+        <activity
+            android:name=".activities.WorkbenchActivity"
+            android:label="@string/title_activity_workbench"
+            android:parentActivityName=".activities.ExplorerActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unipdf.app.activities.ExplorerActivity" />
+        </activity>
     </application>
 
 </manifest>

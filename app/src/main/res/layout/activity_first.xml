@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/firts_activ_container"
     android:orientation="horizontal"
-    tools:context="com.unipdf.app.activities.FirstActivity">
+    tools:context="com.unipdf.app.activities.ExplorerActivity">
 
 
     <FrameLayout

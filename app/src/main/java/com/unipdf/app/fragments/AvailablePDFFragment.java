@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -28,12 +26,17 @@ import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.vos.LightPDF;
 
 
-public class All_List_Frag extends Fragment implements AdapterView.OnItemClickListener {
+public class AvailablePDFFragment extends Fragment implements AdapterView.OnItemClickListener {
+
+    public interface IAvailablePDFCallbacks {
+        public void onItemShortClickAvailablePDF(LightPDF _lightPDF, View v);
+        public void onSendCopyList(SparseArray<LightPDF> _CopyList);
+    }
 
     //eventuell muss eine Parcebel list erstellt werden
     ArrayList<LightPDF> mAllPDFs = null;
     SparseArray<LightPDF> mCopyList = null;
-    ICom_All_List_Frag mICom_all_list_frag = null;
+    IAvailablePDFCallbacks mIAvailablePDFCallbacks = null;
 
     private ListView mLv;
     private LightPDF_List_Adapt mLa;
@@ -42,7 +45,7 @@ public class All_List_Frag extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        mICom_all_list_frag.onItemShortClick_All_List_Frag(mAllPDFs.get(i), view);
+        mIAvailablePDFCallbacks.onItemShortClickAvailablePDF(mAllPDFs.get(i), view);
     }
 
     @Override
@@ -50,7 +53,7 @@ public class All_List_Frag extends Fragment implements AdapterView.OnItemClickLi
         super.onAttach(activity);
         mModel = ApplicationModel.getInstance();
 
-        mICom_all_list_frag = (ICom_All_List_Frag) activity;
+        mIAvailablePDFCallbacks = (IAvailablePDFCallbacks) activity;
         mAllPDFs = mModel.getPDFs();
         mCopyList = new SparseArray<LightPDF>();
 
@@ -137,7 +140,7 @@ public class All_List_Frag extends Fragment implements AdapterView.OnItemClickLi
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 if(item.getItemId() == R.id.action_add_favs) {
-                    mICom_all_list_frag.onSendCopyList(mCopyList);
+                    mIAvailablePDFCallbacks.onSendCopyList(mCopyList);
                     mode.finish();
                 }
                 return true;
@@ -149,14 +152,6 @@ public class All_List_Frag extends Fragment implements AdapterView.OnItemClickLi
             }
         });
         mLv.setAdapter(mLa);
-
-        if(mCopyList.size() > 0) {
-            for (int index = 0; index < mCopyList.size(); ++index) {
-                int pos = mCopyList.keyAt(index);
-                Log.d("Test", ""+pos);
-                mLv.setItemChecked(pos, true);
-            }
-        }
     }
 
     private void changeCopyList(int _Pos, boolean _Checked) {
@@ -175,8 +170,5 @@ public class All_List_Frag extends Fragment implements AdapterView.OnItemClickLi
         }
     };
 
-    public interface ICom_All_List_Frag{
-        public void onItemShortClick_All_List_Frag(LightPDF _lightPDF, View v);
-        public void onSendCopyList(SparseArray<LightPDF> _CopyList);
-    }
+
 }
