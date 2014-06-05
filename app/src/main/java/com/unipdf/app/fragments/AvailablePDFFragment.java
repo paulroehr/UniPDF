@@ -29,7 +29,7 @@ import com.unipdf.app.vos.LightPDF;
 public class AvailablePDFFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     public interface IAvailablePDFCallbacks {
-        public void onItemShortClickAvailablePDF(LightPDF _lightPDF, View v);
+        public void onItemShortClickAvailablePDF(LightPDF _lightPDF);
         public void onSendCopyList(SparseArray<LightPDF> _CopyList);
     }
 
@@ -45,7 +45,7 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        mIAvailablePDFCallbacks.onItemShortClickAvailablePDF(mAllPDFs.get(i), view);
+        mIAvailablePDFCallbacks.onItemShortClickAvailablePDF(mAllPDFs.get(i));
     }
 
     @Override

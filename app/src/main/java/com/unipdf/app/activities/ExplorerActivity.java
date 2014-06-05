@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.SparseArray;
-import android.view.View;
 
 import com.unipdf.app.R;
 import com.unipdf.app.fragments.AvailablePDFFragment;
@@ -24,6 +23,7 @@ public class ExplorerActivity extends Activity
     private static final String LOG_TAG = ExplorerActivity.class.getSimpleName();
 
     public static final String EXTRA_ALREADY_STARTED = "extraAlreadyStarted";
+    public static final String EXTRA_CHOSEN_PDF = "extraChosenPDF";
 
     private FileReceiver mReceiver;
 
@@ -87,12 +87,18 @@ public class ExplorerActivity extends Activity
         outState.putBoolean(EXTRA_ALREADY_STARTED, mAlreadyStarted);
     }
 
+    private void startWorkbench(LightPDF _pdf) {
+        Intent intent = new Intent(this, WorkbenchActivity.class);
+        intent.putExtra(EXTRA_CHOSEN_PDF, _pdf);
+        startActivity(intent);
+    }
+
     //##############################################################################################
     // All_List_Frag
     //##############################################################################################
     @Override
-    public void onItemShortClickAvailablePDF(LightPDF _lightPDF, View _v) {
-        ///TODO zweite Activity öffnen und PDF übergeben
+    public void onItemShortClickAvailablePDF(LightPDF _lightPDF) {
+        startWorkbench(_lightPDF);
     }
 
     @Override
@@ -107,8 +113,8 @@ public class ExplorerActivity extends Activity
     // Fav_List_frag
     //##############################################################################################
     @Override
-    public void onItemShortClickFavoritedPDF(LightPDF _lightPDF, View v) {
-
+    public void onItemShortClickFavoritedPDF(LightPDF _lightPDF) {
+        startWorkbench(_lightPDF);
     }
 
     @Override

@@ -38,7 +38,7 @@ import com.unipdf.app.vos.LightPDF;
 public class PDFManagerFragment extends Fragment {
 
     public interface IPDFManagerCallbacks {
-        public void onItemShortClickFavoritedPDF(LightPDF _lightPDF, View v);
+        public void onItemShortClickFavoritedPDF(LightPDF _lightPDF);
         public void updateCurrentCategory(Category _Category);
         public void deleteCategory(Category _Category);
     }
@@ -333,7 +333,7 @@ public class PDFManagerFragment extends Fragment {
     private AdapterView.OnItemClickListener mFavClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            mIPDFManagerCallbacks.onItemShortClickFavoritedPDF(mFavs.get(position));
         }
     };
 
