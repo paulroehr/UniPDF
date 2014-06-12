@@ -2,6 +2,7 @@ package com.unipdf.app.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -69,6 +70,19 @@ public class Helper {
         Toast toast = Toast.makeText(_Activity, _message, Toast.LENGTH_SHORT);
         toast.setGravity(_Gravity, 0, 120);
         toast.show();
+    }
+
+    //dpToPx----------------------------------------------------------------------------------------
+    /**
+     * Converts density-independent pixel (dp) to pixel (px)
+     *
+     * @param dp the dp value to convert in pixel
+     *
+     * @return the converted value in pixels
+     */
+    public static float dpToPx(float dp)
+    {
+        return dp * Resources.getSystem().getDisplayMetrics().density;
     }
 
 }

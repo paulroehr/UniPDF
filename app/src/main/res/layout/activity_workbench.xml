@@ -5,11 +5,15 @@
     android:orientation="horizontal"
     tools:context=".activities.WorkbenchActivity">
 
-
+    <ListView
+        android:layout_width="128dp"
+        android:layout_height="match_parent"
+        android:id="@+id/thumbnailList"/>
 
     <com.joanzapata.pdfview.PDFView
         android:id="@+id/pdfview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
 
 </LinearLayout>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/Users/paul/Documents/Projects/Android/UniPDF/UniPDF/libraries/AndroidPDFViewerLibrary/assets" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/Users/paul/Documents/Projects/Android/UniPDF/UniPDF/libraries/AndroidPDFViewerLibrary/src/release/assets" />
+    </dataSet>
+
+</merger>
