@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="12dp"
-    android:background="@android:color/white">
+    android:background="?android:attr/activatedBackgroundIndicator"
+    android:layout_gravity="center">
 
     <ImageView
-        android:layout_width="88dp"
-        android:layout_height="64dp"
-        android:layout_gravity="center"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
         android:id="@+id/imageAdapterView"/>
 
 </LinearLayout>

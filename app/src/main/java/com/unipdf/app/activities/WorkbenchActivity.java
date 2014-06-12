@@ -5,15 +5,18 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.joanzapata.pdfview.PDFView;
+import com.joanzapata.pdfview.listener.OnPageChangeListener;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 import com.unipdf.app.R;
@@ -55,11 +58,12 @@ public class WorkbenchActivity extends Activity {
         loader.setListener(mLoaderListener);
         loader.execute(pdf.getFilePath().getPath());
 
+        thumbnailList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         thumbnailList.setAdapter(adapter);
 
         final PDFView pdfView = (PDFView) findViewById(R.id.pdfview);
         pdfView.fromFile(new File(pdf.getFilePath().getPath()))
-
+                .onPageChange(mPageChangeListener)
                 .defaultPage(1)
                 .showMinimap(true)
                 .enableSwipe(true)
@@ -69,6 +73,7 @@ public class WorkbenchActivity extends Activity {
         thumbnailList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                thumbnailList.setItemChecked(position , true);
                 pdfView.jumpTo(position+1);
             }
         });
@@ -107,5 +112,12 @@ public class WorkbenchActivity extends Activity {
         }
     };
 
+    private OnPageChangeListener mPageChangeListener = new OnPageChangeListener() {
+        @Override
+        public void onPageChanged(int page, int pageCount) {
+            thumbnailList.setItemChecked(page-1 , true);
+            thumbnailList.smoothScrollToPosition(page-1);
+        }
+    };
 
 }

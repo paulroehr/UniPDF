@@ -38,7 +38,7 @@ public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
     protected List<Bitmap> doInBackground(String... params) {
 
         String path = params[0];
-        float width = Helper.dpToPx(88);
+        float width = Helper.dpToPx(120);
 
         try {
             // select a document and get bytes
