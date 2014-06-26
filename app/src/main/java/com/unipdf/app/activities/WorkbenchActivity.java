@@ -2,45 +2,40 @@ package com.unipdf.app.activities;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnPageChangeListener;
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
 import com.unipdf.app.R;
 import com.unipdf.app.adapter.ImageAdapter;
 import com.unipdf.app.utils.Helper;
 import com.unipdf.app.utils.ThumbnailLoader;
 import com.unipdf.app.vos.LightPDF;
 
-import net.sf.andpdf.nio.ByteBuffer;
-
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class WorkbenchActivity extends Activity {
+
+    PDFView mPDFView;
 
     ListView thumbnailList;
     List<Bitmap> thumbnails;
     ImageAdapter adapter;
+
+    File mCpy = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,32 +44,46 @@ public class WorkbenchActivity extends Activity {
 
         LightPDF pdf = getIntent().getParcelableExtra(ExplorerActivity.EXTRA_CHOSEN_PDF);
 
-        thumbnailList = (ListView) findViewById(R.id.thumbnailList);
-        thumbnails = new ArrayList<Bitmap>();
-        adapter  = new ImageAdapter(this, thumbnails);
+        File src = new File(pdf.getFilePath().getPath());
+        mCpy = null;
+        try {
+            File file  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UniPDF");
+            if(!file.exists()) {
+                file.mkdirs();
+            }
 
+            mCpy = new File(Environment.getExternalStorageDirectory() + File.separator + "UniPDF" + File.separator + src.getName());
+            Helper.copy(src, mCpy);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ThumbnailLoader loader = new ThumbnailLoader();
         loader.setListener(mLoaderListener);
-        loader.execute(pdf.getFilePath().getPath());
+        loader.setPath(Uri.fromFile(mCpy));
+        loader.setActivity(WorkbenchActivity.this);
+        loader.execute(new String[]{});
 
+        thumbnails = new ArrayList<Bitmap>();
+        adapter  = new ImageAdapter(this, thumbnails);
+
+        thumbnailList = (ListView) findViewById(R.id.thumbnailList);
         thumbnailList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         thumbnailList.setAdapter(adapter);
 
-        final PDFView pdfView = (PDFView) findViewById(R.id.pdfview);
-        pdfView.fromFile(new File(pdf.getFilePath().getPath()))
+        mPDFView = (PDFView) findViewById(R.id.pdfview);
+        mPDFView.fromFile(src)
                 .onPageChange(mPageChangeListener)
                 .defaultPage(1)
                 .showMinimap(true)
                 .enableSwipe(true)
-
                 .load();
 
         thumbnailList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 thumbnailList.setItemChecked(position , true);
-                pdfView.jumpTo(position+1);
+                mPDFView.jumpTo(position+1);
             }
         });
     }
@@ -103,10 +112,12 @@ public class WorkbenchActivity extends Activity {
         @Override
         public void onProgress(Bitmap _Bitmap) {
             thumbnails.add(_Bitmap);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
         public void onFinish() {
+            mCpy.delete();
             adapter.notifyDataSetChanged();
 
         }

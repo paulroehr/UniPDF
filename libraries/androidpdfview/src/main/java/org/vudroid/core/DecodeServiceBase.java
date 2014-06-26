@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 
 import org.vudroid.core.codec.CodecContext;
@@ -78,7 +77,7 @@ public class DecodeServiceBase implements DecodeService
                     }
                     catch (IOException e)
                     {
-                        Log.e(DECODE_SERVICE, "Decode fail", e);
+//                        Log.e(DECODE_SERVICE, "Decode fail", e);
                     }
                 }
             });
@@ -104,10 +103,10 @@ public class DecodeServiceBase implements DecodeService
     {
         if (isTaskDead(currentDecodeTask))
         {
-            Log.d(DECODE_SERVICE, "Skipping decode task for page " + currentDecodeTask.pageNumber);
+//            Log.d(DECODE_SERVICE, "Skipping decode task for page " + currentDecodeTask.pageNumber);
             return;
         }
-        Log.d(DECODE_SERVICE, "Starting decode of page: " + currentDecodeTask.pageNumber);
+//        Log.d(DECODE_SERVICE, "Starting decode of page: " + currentDecodeTask.pageNumber);
         CodecPage vuPage = getPage(currentDecodeTask.pageNumber);
         preloadNextPage(currentDecodeTask.pageNumber);
 
@@ -115,10 +114,10 @@ public class DecodeServiceBase implements DecodeService
         {
             return;
         }
-        Log.d(DECODE_SERVICE, "Start converting map to bitmap");
+//        Log.d(DECODE_SERVICE, "Start converting map to bitmap");
         float scale = calculateScale(vuPage) * currentDecodeTask.zoom;
         final Bitmap bitmap = vuPage.renderBitmap(getScaledWidth(currentDecodeTask, vuPage, scale), getScaledHeight(currentDecodeTask, vuPage, scale), currentDecodeTask.pageSliceBounds);
-        Log.d(DECODE_SERVICE, "Converting map to bitmap finished");
+//        Log.d(DECODE_SERVICE, "Converting map to bitmap finished");
         if (isTaskDead(currentDecodeTask))
         {
             bitmap.recycle();

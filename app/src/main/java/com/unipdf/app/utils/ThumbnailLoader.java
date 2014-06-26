@@ -1,19 +1,26 @@
 package com.unipdf.app.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
 
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
+import com.unipdf.app.activities.WorkbenchActivity;
 
-import net.sf.andpdf.nio.ByteBuffer;
+import org.vudroid.core.DecodeService;
+import org.vudroid.core.DecodeServiceBase;
+import org.vudroid.core.codec.CodecPage;
+import org.vudroid.pdfdroid.codec.PdfContext;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,49 +36,42 @@ public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
 
     final List<Bitmap> mThumbnails = new ArrayList<Bitmap>();
     IThumbnailLoaderListener mListener;
+    Uri mPath;
+    WorkbenchActivity activity;
+
+    /** The decode service used for decoding the PDF */
+    private DecodeService decodeService;
 
     public void setListener(IThumbnailLoaderListener _listener) {
         mListener = _listener;
     }
 
+    public void setPath(Uri _path) {
+        mPath = _path;
+    }
+
+    public void setActivity(WorkbenchActivity _activity) {
+        activity = _activity;
+    }
+
     @Override
     protected List<Bitmap> doInBackground(String... params) {
 
-        String path = params[0];
-        float width = Helper.dpToPx(120);
+        decodeService = new DecodeServiceBase(new PdfContext());
+        decodeService.setContentResolver(activity.getContentResolver());
+        decodeService.open(mPath);
+        int pageCount = decodeService.getPageCount();
 
-        try {
-            // select a document and get bytes
-            File file = new File(path);
-            RandomAccessFile raf = null;
-            raf = new RandomAccessFile(file, "r");
-            FileChannel channel = raf.getChannel();
-            ByteBuffer bb = ByteBuffer.NEW(channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size()));
-            raf.close();
-            // create a pdf doc
-            PDFFile pdfFile = new PDFFile(bb);
-            //Get the first page from the pdf doc
-            PDFPage pdfPage = pdfFile.getPage(1, true);
-            //create a scaling value according to the WebView Width
-            float scale = width / pdfPage.getWidth();
-            //convert the page into a bitmap with a scaling value
-            Bitmap page = pdfPage.getImage((int) (pdfPage.getWidth() * scale), (int) (pdfPage.getHeight() * scale), null, true, true);
+        for (int i = 0; i < pageCount; i++) {
+            CodecPage page = decodeService.getPage(i);
+            Bitmap pageBitmap;
 
-            mThumbnails.add(page);
-            onProgressUpdate(page);
+//            synchronized (decodeService.getClass()) {
+                pageBitmap = page.renderBitmap(decodeService.getPageWidth(i), decodeService.getPageHeight(i), new RectF(0, 0, 1, 1));
+//            }
 
-            int pageCount = pdfFile.getNumPages();
-
-            for (int i = 2; i <= pageCount; i++) {
-                pdfPage = pdfFile.getPage(i, true);
-                page = pdfPage.getImage((int) (pdfPage.getWidth() * scale), (int) (pdfPage.getHeight() * scale), null, true, true);
-
-                mThumbnails.add(page);
-                onProgressUpdate(page);
-            }
-
-        } catch (Exception e) {
-//            e.printStackTrace();
+            mThumbnails.add(pageBitmap);
+            publishProgress(pageBitmap);
         }
 
         return mThumbnails;
@@ -85,7 +85,7 @@ public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
 
     @Override
     protected void onProgressUpdate(Bitmap... values) {
-        super.onProgressUpdate(values);
+        super.onProgressUpdate(values[0]);
         mListener.onProgress(values[0]);
     }
 }

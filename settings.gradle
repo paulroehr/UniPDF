@@ -1,2 +1,1 @@
-include ':app', ':libraries:androidpdfview', ':libraries:AndroidPDFViewerLibrary', ':AndroidPDFViewerLibrary'
-project(':AndroidPDFViewerLibrary').projectDir = new File('libraries/AndroidPDFViewerLibrary')
+include ':app', ':libraries:androidpdfview'
