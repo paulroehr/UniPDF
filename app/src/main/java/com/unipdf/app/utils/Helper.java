@@ -3,6 +3,8 @@ package com.unipdf.app.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -104,5 +106,38 @@ public class Helper {
         }
         in.close();
         out.close();
+    }
+
+    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        int h = (int) (newHeight*densityMultiplier);
+        int w = (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+        photo = Bitmap.createScaledBitmap(photo, w, h, true);
+
+        return photo;
+    }
+
+    public static void scaleDownSize(int bitmapWidth, int bitmapHeight, int newHeight, Context context, int[] scale) {
+
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;
+
+        scale[1] = (int) (newHeight * densityMultiplier);
+        scale[0] = (int) (scale[1] * ((double) bitmapWidth / ((double) bitmapHeight)));
+
+    }
+
+    public static boolean checkForExistingPDFs(Uri _Path, ArrayList<LightPDF> _List)
+    {
+        if (_List != null) {
+            for (LightPDF PDF : _List) {
+                if (PDF.getFilePath().equals(_Path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

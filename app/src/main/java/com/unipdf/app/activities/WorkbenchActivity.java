@@ -35,7 +35,9 @@ public class WorkbenchActivity extends Activity {
     List<Bitmap> thumbnails;
     ImageAdapter adapter;
 
-    File mCpy = null;
+    ThumbnailLoader mLoader;
+
+//    File mCpy = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +47,24 @@ public class WorkbenchActivity extends Activity {
         LightPDF pdf = getIntent().getParcelableExtra(ExplorerActivity.EXTRA_CHOSEN_PDF);
 
         File src = new File(pdf.getFilePath().getPath());
-        mCpy = null;
-        try {
-            File file  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UniPDF");
-            if(!file.exists()) {
-                file.mkdirs();
-            }
+//        mCpy = null;
+//        try {
+//            File file  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UniPDF");
+//            if(!file.exists()) {
+//                file.mkdirs();
+//            }
+//
+//            mCpy = new File(Environment.getExternalStorageDirectory() + File.separator + "UniPDF" + File.separator + src.getName());
+//            Helper.copy(src, mCpy);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-            mCpy = new File(Environment.getExternalStorageDirectory() + File.separator + "UniPDF" + File.separator + src.getName());
-            Helper.copy(src, mCpy);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ThumbnailLoader loader = new ThumbnailLoader();
-        loader.setListener(mLoaderListener);
-        loader.setPath(Uri.fromFile(mCpy));
-        loader.setActivity(WorkbenchActivity.this);
-        loader.execute(new String[]{});
+        mLoader = new ThumbnailLoader();
+        mLoader.setListener(mLoaderListener);
+        mLoader.setPath(Uri.fromFile(src));
+        mLoader.setActivity(WorkbenchActivity.this);
+        mLoader.execute(new String[]{});
 
         thumbnails = new ArrayList<Bitmap>();
         adapter  = new ImageAdapter(this, thumbnails);
@@ -88,6 +90,11 @@ public class WorkbenchActivity extends Activity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        mLoader.cancel(true);
+        super.onBackPressed();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,7 +124,7 @@ public class WorkbenchActivity extends Activity {
 
         @Override
         public void onFinish() {
-            mCpy.delete();
+//            mCpy.delete();
             adapter.notifyDataSetChanged();
 
         }

@@ -48,7 +48,7 @@ public class Categories_List_Adapt extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return mItems.get(position).getId();
     }
 
     @Override

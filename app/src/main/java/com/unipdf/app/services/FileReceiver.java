@@ -3,6 +3,7 @@ package com.unipdf.app.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
 import com.unipdf.app.models.ApplicationModel;
@@ -22,7 +23,6 @@ public class FileReceiver extends BroadcastReceiver {
         // Daten aus Intent rausholen
 
         ArrayList<LightPDF> tempList = intent.getParcelableArrayListExtra(FileCrawlerService.PARAM_SEND_PDFS);
-        tempList.addAll(tempList);
         ApplicationModel.getInstance().addPDFs(tempList);
     }
 }

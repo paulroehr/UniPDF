@@ -68,5 +68,4 @@ public class FileCrawlerService extends IntentService {
 
     }
 
-
 }

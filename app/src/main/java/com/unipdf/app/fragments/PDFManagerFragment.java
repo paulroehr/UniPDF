@@ -24,11 +24,14 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.unipdf.app.Main;
 import com.unipdf.app.R;
 import com.unipdf.app.adapter.Categories_List_Adapt;
 import com.unipdf.app.adapter.LightPDF_List_Adapt;
+import com.unipdf.app.adapter.PreviewFavoritesAdapter;
 import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.utils.Helper;
 import com.unipdf.app.vos.Category;
@@ -39,15 +42,17 @@ public class PDFManagerFragment extends Fragment {
 
     public interface IPDFManagerCallbacks {
         public void onItemShortClickFavoritedPDF(LightPDF _lightPDF);
+        public void addCategory(Category _Category);
         public void updateCurrentCategory(Category _Category);
         public void deleteCategory(Category _Category);
+        public void addPDFToCategory(Category _Category, LightPDF _PDF);
     }
 
     private static final String LOG_TAG = PDFManagerFragment.class.getSimpleName();
 
     private static final String EXTRA_CATEGORY_POS = "extraCategoryPos";
 
-    private LightPDF_List_Adapt mFavsAdapter = null;
+    private PreviewFavoritesAdapter mFavsAdapter = null;
     private Categories_List_Adapt mCategoryAdapter = null;
 
     private ArrayList<Category> mCategories = null;
@@ -78,8 +83,8 @@ public class PDFManagerFragment extends Fragment {
 
         mIPDFManagerCallbacks = (IPDFManagerCallbacks) getActivity();
         mCategories = mModel.getCategories();
-        mFavs = new ArrayList<LightPDF>();
         mCurrentCategory = mCategories.get(0);
+        mFavs = mCurrentCategory.getLightPDFs();
 
         mCategoryListPos = 0;
     }
@@ -109,7 +114,7 @@ public class PDFManagerFragment extends Fragment {
 
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_fav_list, container, false);
-        mLv= (ListView) mView.findViewById(R.id.fav_list_View);
+        mLv = (ListView) mView.findViewById(R.id.fav_list_View);
         mGv = (GridView) mView.findViewById(R.id.fav_grid_View);
         mAddButton = (ImageButton) mView.findViewById(R.id.addCategoryButton);
         mCategoryName = (EditText) mView.findViewById(R.id.addCategoryName);
@@ -158,7 +163,8 @@ public class PDFManagerFragment extends Fragment {
                 return true;
             case R.id.context_menu_delete:
                 // Delete
-                mIPDFManagerCallbacks.deleteCategory(mModel.getCategories().get(mRenamePos));
+                Category category = mModel.getCategories().get(mRenamePos);
+                mIPDFManagerCallbacks.deleteCategory(category);
                 mModel.getCategories().remove(mRenamePos);
                 updateFavs(0);
                 setCategoryView();
@@ -168,20 +174,12 @@ public class PDFManagerFragment extends Fragment {
                 return super.onContextItemSelected(item);
         }
     }
-    private boolean checkForExistingFavs(Uri _Path)
-    {
-        for (LightPDF PDF : mCurrentCategory.getLightPDFs()) {
-            if(PDF.getFilePath().equals(_Path)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void addFavsToCurrentCategory(ArrayList<LightPDF> _PDFs) {
         if(!mCategories.isEmpty()) {
             for (LightPDF pdf : _PDFs) {
-                if(!checkForExistingFavs(pdf.getFilePath())) {
+                if(!Helper.checkForExistingPDFs(pdf.getFilePath(), mCurrentCategory.getLightPDFs())) {
+                    mIPDFManagerCallbacks.addPDFToCategory(mCategories.get(mCategoryListPos), pdf);
                     mCategories.get(mCategoryListPos).getLightPDFs().add(pdf);
                 }
             }
@@ -195,7 +193,7 @@ public class PDFManagerFragment extends Fragment {
     }
 
     private void setFavView(){
-        mFavsAdapter = new LightPDF_List_Adapt(mFavs,getActivity(),R.layout.list_item);
+        mFavsAdapter = new PreviewFavoritesAdapter(mFavs, getActivity(), R.layout.preview_favorites_item);
         mGv.setOnItemClickListener(mFavClickListener);
         mGv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mGv.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -259,8 +257,6 @@ public class PDFManagerFragment extends Fragment {
         mLv.setItemChecked(mCategoryListPos, true);
     }
 
-
-
     private boolean checkForExisitingCategory(String _Name) {
         for (Category category : mModel.getCategories()) {
             if(category.getCategoryName().equals(_Name)) {
@@ -275,7 +271,10 @@ public class PDFManagerFragment extends Fragment {
 
         if(!categoryName.isEmpty()) {
             if(!checkForExisitingCategory(categoryName)) {
-                Category category = new Category(new ArrayList<LightPDF>(), categoryName, -1, null);
+                Category category = new Category(new ArrayList<LightPDF>(), categoryName);
+
+                mIPDFManagerCallbacks.addCategory(category);
+
                 mModel.getCategories().add(category);
                 setCategoryView();
                 mCategoryName.setText("");
@@ -286,7 +285,7 @@ public class PDFManagerFragment extends Fragment {
             }
         }
         else {
-//            Helper.showToast("Category name should not be empty!");
+            Helper.showToast(getActivity(), "Category name should not be empty!");
         }
     }
 

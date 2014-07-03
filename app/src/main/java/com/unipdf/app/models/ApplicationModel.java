@@ -1,5 +1,7 @@
 package com.unipdf.app.models;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import com.unipdf.app.events.EventDispatcher;
@@ -73,9 +75,9 @@ public class ApplicationModel extends EventDispatcher {
         mPDFs = new ArrayList<LightPDF>();
         mCopyPDFs = new ArrayList<LightPDF>();
         mCategories = new ArrayList<Category>();
-
-        mCategories.add(new Category(new ArrayList<LightPDF>(), "Action", 0, null));
-        mCategories.add(new Category(new ArrayList<LightPDF>(), "Drama", 1, null));
+//
+//        mCategories.add(new Category(new ArrayList<LightPDF>(), "Action", 0, null));
+//        mCategories.add(new Category(new ArrayList<LightPDF>(), "Drama", 1, null));
     }
 
     private static ApplicationModel ourInstance = null;

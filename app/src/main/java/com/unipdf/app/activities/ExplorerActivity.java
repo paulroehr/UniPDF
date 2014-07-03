@@ -3,9 +3,12 @@ package com.unipdf.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.SparseArray;
 
+import com.unipdf.app.Main;
 import com.unipdf.app.R;
 import com.unipdf.app.fragments.AvailablePDFFragment;
 import com.unipdf.app.fragments.PDFManagerFragment;
@@ -14,7 +17,17 @@ import com.unipdf.app.services.FileCrawlerService;
 import com.unipdf.app.services.FileReceiver;
 import com.unipdf.app.utils.Helper;
 import com.unipdf.app.vos.Category;
+import com.unipdf.app.vos.CategoryPDFMap;
 import com.unipdf.app.vos.LightPDF;
+
+import org.vudroid.core.DecodeService;
+import org.vudroid.core.DecodeServiceBase;
+import org.vudroid.core.codec.CodecPage;
+import org.vudroid.pdfdroid.codec.PdfContext;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExplorerActivity extends Activity
         implements AvailablePDFFragment.IAvailablePDFCallbacks,
@@ -67,6 +80,9 @@ public class ExplorerActivity extends Activity
         if(!mAlreadyStarted) {
             mAlreadyStarted = true;
 
+            // Wenn neue Daten geladen werden sollen alte rausgehauen werden.
+            ApplicationModel.getInstance().getPDFs().clear();
+
             // Service wird gestartet
             Intent msgIntent = new Intent(this, FileCrawlerService.class);
             msgIntent.putExtra(FileCrawlerService.KEY_FILE_CRAWLER, FileCrawlerService.ACTION_SEARCH_ALL);
@@ -87,10 +103,31 @@ public class ExplorerActivity extends Activity
         outState.putBoolean(EXTRA_ALREADY_STARTED, mAlreadyStarted);
     }
 
+    private boolean checkPdf(LightPDF _pdf) {
+        DecodeService decodeService = new DecodeServiceBase(new PdfContext());
+        decodeService.setContentResolver(this.getContentResolver());
+        try {
+            decodeService.open(_pdf.getFilePath());
+        }
+        catch(Exception e) {
+            return false;
+        }
+        finally {
+            decodeService.recycle();
+        }
+        return true;
+    }
+
     private void startWorkbench(LightPDF _pdf) {
-        Intent intent = new Intent(this, WorkbenchActivity.class);
-        intent.putExtra(EXTRA_CHOSEN_PDF, _pdf);
-        startActivity(intent);
+
+        if(checkPdf(_pdf)) {
+            Intent intent = new Intent(this, WorkbenchActivity.class);
+            intent.putExtra(EXTRA_CHOSEN_PDF, _pdf);
+            startActivity(intent);
+        }
+        else {
+            Helper.showToast(this, "File is corrupted");
+        }
     }
 
     //##############################################################################################
@@ -104,6 +141,7 @@ public class ExplorerActivity extends Activity
     @Override
     public void onSendCopyList(SparseArray<LightPDF> _CopyList) {
         Helper.convertSparseToArrayList(_CopyList, ApplicationModel.getInstance().getCopyPDFs());
+
         mFlf.addFavsToCurrentCategory(ApplicationModel.getInstance().getCopyPDFs());
         ApplicationModel.getInstance().clearCopyList();
     }
@@ -119,12 +157,48 @@ public class ExplorerActivity extends Activity
 
     @Override
     public void updateCurrentCategory(Category _Category) {
-        // TODO: Store in DataManager
+        try {
+            Main.getDbHelper().getCategoryDao().update(_Category);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void deleteCategory(Category _Category) {
-        // TODO: Delete from DataManager
+        try {
+            Main.getDbHelper().getCategoryDao().delete(_Category);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
+    @Override
+    public void addCategory(Category _Category) {
+        try {
+            Main.getDbHelper().getCategoryDao().create(_Category);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void addPDFToCategory(Category _Category, LightPDF _PDF) {
+        try {
+            List<LightPDF> list = Main.getDbHelper().getLightPDFDao().queryForEq(LightPDF.COLUMN_PATH, _PDF.getFilePath().getPath());
+
+            if(list.isEmpty()) {
+                Main.getDbHelper().getLightPDFDao().create(_PDF);
+            }
+            else {
+                _PDF = list.get(0);
+            }
+
+            CategoryPDFMap map = new CategoryPDFMap(_Category, _PDF);
+            Main.getDbHelper().getMappingDao().create(map);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

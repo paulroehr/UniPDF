@@ -15,7 +15,7 @@
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/pdficon"
         android:layout_gravity="center"
         android:id="@+id/item_imageView"
         android:layout_marginRight="4dp"/>

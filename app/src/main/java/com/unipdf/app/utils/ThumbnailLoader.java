@@ -59,19 +59,32 @@ public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
 
         decodeService = new DecodeServiceBase(new PdfContext());
         decodeService.setContentResolver(activity.getContentResolver());
-        decodeService.open(mPath);
-        int pageCount = decodeService.getPageCount();
+        int[] scale = new int[2];
 
-        for (int i = 0; i < pageCount; i++) {
-            CodecPage page = decodeService.getPage(i);
-            Bitmap pageBitmap;
+        try {
+            decodeService.open(mPath);
+            int pageCount = decodeService.getPageCount();
 
-//            synchronized (decodeService.getClass()) {
-                pageBitmap = page.renderBitmap(decodeService.getPageWidth(i), decodeService.getPageHeight(i), new RectF(0, 0, 1, 1));
-//            }
+            for (int i = 0; i < pageCount; i++) {
+                if (!isCancelled()) {
+                    CodecPage page = decodeService.getPage(i);
+                    Bitmap pageBitmap;
 
-            mThumbnails.add(pageBitmap);
-            publishProgress(pageBitmap);
+                    Helper.scaleDownSize(decodeService.getPageWidth(i), decodeService.getPageHeight(i), 100, activity, scale);
+                    pageBitmap = page.renderBitmap(scale[0], scale[1], new RectF(0, 0, 1, 1));
+
+                    mThumbnails.add(pageBitmap);
+                    publishProgress(pageBitmap);
+                } else {
+                    break;
+                }
+            }
+        }
+        catch (Exception e) {
+
+        }
+        finally {
+            decodeService.recycle();
         }
 
         return mThumbnails;

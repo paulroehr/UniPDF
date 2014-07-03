@@ -51,7 +51,6 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         mDirectories = new Stack<File>();
 
 
-//        mDataDir = Environment.getDataDirectory();
         mExternal = Environment.getExternalStorageDirectory();
 
         mMaxSizeOfPdfList = DEFAULT_MAX_SIZE;
@@ -61,9 +60,6 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         mPDFList = new ArrayList<File>();
         mDirectories = new Stack<File>();
 
-
-        // Wird nicht verwendet da normaler User kein Zugriff hat
-//        mDataDir = Environment.getDataDirectory();
         mExternal = Environment.getExternalStorageDirectory();
 
         mMaxSizeOfPdfList = _SizeOfPdfList;
@@ -93,9 +89,6 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
     }
 
     private void traverseDirs() {
-//        if (mDataDir.isDirectory() && (mDataDir != null)) {
-//            mDirectories.push(mDataDir);
-//        }
 
         if ( (mExternal != null) && mExternal.isDirectory() ) {
             mDirectories.push(mExternal);
@@ -105,6 +98,7 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
             File temp = mDirectories.pop();
             traversePath(temp);
         }
+        publishProgress(mPDFList);
     }
 
     private void traversePath(File _Directory) throws IllegalArgumentException {
@@ -125,7 +119,7 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
                     mPDFList.add(F);
 
                 if (getSizeOfPdfList() >= mMaxSizeOfPdfList) {
-                    onProgressUpdate(mPDFList);
+                    publishProgress(mPDFList);
                 }
             }
 

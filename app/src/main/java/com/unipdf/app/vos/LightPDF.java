@@ -1,16 +1,56 @@
 package com.unipdf.app.vos;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by schotte on 06.05.14.
- */
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+@DatabaseTable(tableName = "LightPDF")
 public class LightPDF implements Parcelable{
-    private Uri mPicture;
+
+    public static final String COLUMN_NAME      = "NAME";
+    public static final String COLUMN_PICTURE   = "PICTURE";
+    public static final String COLUMN_PATH      = "PATH";
+    public static final String COLUMN_ID        = "ID";
+
+    @DatabaseField( columnName = COLUMN_ID, generatedId = true )
+    private long mId;
+
+    private Bitmap mPicture;
+
+//    @DatabaseField( columnName = COLUMN_PICTURE, dataType = DataType.BYTE_ARRAY, canBeNull = true, useGetSet = true)
+    private byte[] mPictureByteArray;
+
+    @DatabaseField( columnName = COLUMN_NAME, canBeNull = false)
     private String mName;
+
     private Uri mFilePath;
+
+    @DatabaseField( columnName = COLUMN_PATH, canBeNull = false, useGetSet = true)
+    private String mStringFilePath;
+
+    public LightPDF(){
+
+    }
+
+    public LightPDF(Parcel _In){
+        mName    = _In.readString();
+        mPicture = _In.readParcelable(Bitmap.class.getClassLoader());
+        mFilePath = _In.readParcelable(Uri.class.getClassLoader());
+    }
+
+    public LightPDF(Bitmap _Picture, String _Name, Uri _FilePath) {
+        mName = _Name;
+        mPicture = _Picture;
+        mFilePath = _FilePath;
+    }
 
     public String getmName() {
         return mName;
@@ -20,11 +60,11 @@ public class LightPDF implements Parcelable{
         mName = _Name;
     }
 
-    public Uri getmPicture() {
+    public Bitmap getmPicture() {
         return mPicture;
     }
 
-    public void setmPicture(Uri _Picture) {
+    public void setmPicture(Bitmap _Picture) {
         mPicture = _Picture;
     }
 
@@ -36,20 +76,34 @@ public class LightPDF implements Parcelable{
         mFilePath = _filePath;
     }
 
-    public LightPDF(){
-
+    public long getId() {
+        return mId;
     }
 
-    public LightPDF(Parcel _In){
-        mName    = _In.readString();
-        mPicture = _In.readParcelable(Uri.class.getClassLoader());
-        mFilePath = _In.readParcelable(Uri.class.getClassLoader());
+    public void setId(long _id) {
+        mId = _id;
     }
 
-    public LightPDF(Uri _Picture, String _Name, Uri _FilePath) {
-        mName = _Name;
-        mPicture = _Picture;
-        mFilePath = _FilePath;
+    public byte[] getMPictureByteArray() {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        mPicture.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        mPictureByteArray = stream.toByteArray();
+        return mPictureByteArray;
+    }
+
+    public void setMPictureByteArray(byte[] _pictureByteArray) {
+        mPictureByteArray = _pictureByteArray;
+        mPicture = BitmapFactory.decodeByteArray(_pictureByteArray, 0, _pictureByteArray.length);
+    }
+
+    public String getMStringFilePath() {
+        mStringFilePath = mFilePath.getPath();
+        return mStringFilePath;
+    }
+
+    public void setMStringFilePath(String _stringFilePath) {
+        mStringFilePath = _stringFilePath;
+        mFilePath = Uri.fromFile(new File(_stringFilePath));
     }
 
     /**

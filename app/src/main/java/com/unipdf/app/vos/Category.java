@@ -4,30 +4,38 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.ArrayList;
 
-/**
- * Created by schotte on 06.05.14.
- */
+@DatabaseTable(tableName = "Category")
 public class Category implements Parcelable {
 
-    private ArrayList<LightPDF> mLightPDFs = null;
-    private String mCategoryName;
-    private int mId;
-    private Uri mPicture;
+    public static final String COLUMN_NAME = "NAME";
+    public static final String COLUMN_ID = "ID";
 
-    public Category(ArrayList<LightPDF> _LightPDFs, String _CategoryName, int _Id, Uri _Picture) {
+    private ArrayList<LightPDF> mLightPDFs = new ArrayList<LightPDF>();
+
+    @DatabaseField( columnName = COLUMN_NAME, canBeNull = false)
+    private String mCategoryName;
+
+    @DatabaseField( columnName = COLUMN_ID, generatedId = true )
+    private long mId;
+
+    public Category() {
+    }
+
+    public Category(ArrayList<LightPDF> _LightPDFs, String _CategoryName) {
         mLightPDFs = _LightPDFs;
         mCategoryName = _CategoryName;
-        mId = _Id;
-        mPicture = _Picture;
     }
 
     public Category(Parcel _In) {
         mCategoryName = _In.readString();
         _In.readTypedList(mLightPDFs, LightPDF.CREATOR);
-        mId = _In.readInt();
-        mPicture = _In.readParcelable(Uri.class.getClassLoader());
+        mId = _In.readLong();
     }
 
     public ArrayList<LightPDF> getLightPDFs() {
@@ -46,20 +54,13 @@ public class Category implements Parcelable {
         this.mCategoryName = mFavName;
     }
 
-    public int getId() {
+
+    public long getId() {
         return mId;
     }
 
-    public void setId(int mId) {
-        this.mId = mId;
-    }
-
-    public Uri getPicture() {
-        return mPicture;
-    }
-
-    public void setPicture(Uri mPicture) {
-        this.mPicture = mPicture;
+    public void setId(long _Id) {
+        mId = _Id;
     }
 
     /**
@@ -85,8 +86,7 @@ public class Category implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mCategoryName);
         dest.writeTypedList(mLightPDFs);
-        dest.writeInt(mId);
-        dest.writeParcelable(mPicture, PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeLong(mId);
     }
 
     public static final Parcelable.Creator<Category> CREATOR
