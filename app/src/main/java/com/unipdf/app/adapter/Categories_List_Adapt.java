@@ -66,6 +66,7 @@ public class Categories_List_Adapt extends BaseAdapter {
             holder = (ViewHolder) row.getTag();
         }
 
+        holder.mImage.setImageResource(R.drawable.shelf);
         holder.mImage.setVisibility(View.VISIBLE);
         holder.mName.setText(mItems.get(position).getCategoryName());
 

@@ -46,6 +46,7 @@ public class PDFManagerFragment extends Fragment {
         public void updateCurrentCategory(Category _Category);
         public void deleteCategory(Category _Category);
         public void addPDFToCategory(Category _Category, LightPDF _PDF);
+        public void deletePDFFromCategory(Category _Category, LightPDF _PDF);
     }
 
     private static final String LOG_TAG = PDFManagerFragment.class.getSimpleName();
@@ -233,6 +234,7 @@ public class PDFManagerFragment extends Fragment {
 
     private void deleteSelectedPDFsFromCategory() {
         for (int index = 0; index < mDeleteList.size(); index++) {
+            mIPDFManagerCallbacks.deletePDFFromCategory(mCurrentCategory, mDeleteList.valueAt(index));
             mFavs.remove(mDeleteList.valueAt(index));
         }
         mIPDFManagerCallbacks.updateCurrentCategory(mCurrentCategory);

@@ -46,6 +46,8 @@ public class WorkbenchActivity extends Activity {
 
         LightPDF pdf = getIntent().getParcelableExtra(ExplorerActivity.EXTRA_CHOSEN_PDF);
 
+        getActionBar().setTitle(pdf.getmName().substring(0, pdf.getmName().length()-4));
+
         File src = new File(pdf.getFilePath().getPath());
 //        mCpy = null;
 //        try {

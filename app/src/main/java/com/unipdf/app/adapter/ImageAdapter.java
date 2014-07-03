@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.unipdf.app.R;
 
@@ -19,9 +20,11 @@ public class ImageAdapter extends BaseAdapter {
 
     public static class ViewHolder {
         ImageView mImage;
+        TextView mText;
 
         public ViewHolder(View _view) {
             mImage = (ImageView) _view.findViewById(R.id.imageAdapterView);
+            mText  = (TextView)  _view.findViewById(R.id.imageAdapterText);
         }
     }
 
@@ -62,7 +65,9 @@ public class ImageAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        int pos = position + 1;
         viewHolder.mImage.setImageBitmap(mImages.get(position));
+        viewHolder.mText.setText(""+pos);
 
         return convertView;
     }

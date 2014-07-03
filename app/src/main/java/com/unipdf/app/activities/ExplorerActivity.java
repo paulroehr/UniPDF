@@ -8,6 +8,9 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.SparseArray;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.unipdf.app.Main;
 import com.unipdf.app.R;
 import com.unipdf.app.fragments.AvailablePDFFragment;
@@ -167,6 +170,14 @@ public class ExplorerActivity extends Activity
     @Override
     public void deleteCategory(Category _Category) {
         try {
+            List<CategoryPDFMap> maps;
+            Dao<CategoryPDFMap, Long> mappingDao = Main.getDbHelper().getMappingDao();
+            maps = mappingDao.queryForEq(CategoryPDFMap.COLUMN_CATEGORY, _Category);
+
+            for (CategoryPDFMap map : maps) {
+                mappingDao.delete(map);
+            }
+
             Main.getDbHelper().getCategoryDao().delete(_Category);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -200,5 +211,25 @@ public class ExplorerActivity extends Activity
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void deletePDFFromCategory(Category _Category, LightPDF _PDF) {
+
+        try {
+            // TODO: Schöner bauen
+            Dao<CategoryPDFMap, Long> mappingDao = Main.getDbHelper().getMappingDao();
+            List<CategoryPDFMap> list = mappingDao.queryForEq(CategoryPDFMap.COLUMN_CATEGORY, _Category);
+
+            for (CategoryPDFMap map : list) {
+                if(map.getLightPDF().getId() == _PDF.getId() && map.getCategory().getId() == _Category.getId()) {
+                    mappingDao.delete(map);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
