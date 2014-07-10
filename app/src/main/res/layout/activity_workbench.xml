@@ -5,15 +5,109 @@
     android:orientation="horizontal"
     tools:context=".activities.WorkbenchActivity">
 
+
     <ListView
         android:layout_width="158dp"
         android:layout_height="match_parent"
-        android:id="@+id/thumbnailList"/>
+        android:id="@+id/thumbnailList" />
 
-    <com.joanzapata.pdfview.PDFView
-        android:id="@+id/pdfview"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_toLeftOf="@+id/shuffleContainer"
+            android:background="@drawable/border_left"
+            android:animateLayoutChanges="true">
+
+            <com.joanzapata.pdfview.PDFView
+                android:id="@+id/pdfview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include layout="@layout/include_loading" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/shuffleContainer"
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/border_left">
+
+            <LinearLayout
+                android:id="@+id/topButtons"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="56dp"
+                android:weightSum="4"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:gravity="center_horizontal">
+
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/shuffleDelete"
+                    android:src="@drawable/ic_action_discard"/>
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/shuffleNew"
+                    android:src="@drawable/ic_action_new"/>
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/shuffleSave"
+                    android:src="@drawable/ic_action_save"/>
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:id="@+id/shuffleList"
+                android:layout_below="@+id/topButtons"
+                android:layout_above="@+id/bottomButtons"/>
+
+            <LinearLayout
+                android:id="@+id/bottomButtons"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="56dp"
+                android:weightSum="4"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_horizontal">
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/shuffleUp"
+                    android:src="@drawable/ic_action_collapse"/>
+
+                <ImageButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/shuffleDown"
+                    android:src="@drawable/ic_action_expand"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

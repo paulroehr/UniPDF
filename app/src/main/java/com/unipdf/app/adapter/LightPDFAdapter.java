@@ -16,13 +16,13 @@ import com.unipdf.app.vos.LightPDF;
 /**
  * Created by schotte on 06.05.14.
  */
-public class LightPDF_List_Adapt extends BaseAdapter{
+public class LightPDFAdapter extends BaseAdapter{
 
     ArrayList<LightPDF> mLightPDFs = null;
     Context mContext;
     int mLayout;
 
-    public LightPDF_List_Adapt(ArrayList<LightPDF> _LightPDFs, Context _Context, int _Layout) {
+    public LightPDFAdapter(ArrayList<LightPDF> _LightPDFs, Context _Context, int _Layout) {
         this.mLightPDFs = _LightPDFs;
         this.mContext = _Context;
         this.mLayout = _Layout;

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import com.unipdf.app.Main;
 import com.unipdf.app.activities.WorkbenchActivity;
 
 import org.vudroid.core.DecodeService;
@@ -58,7 +59,7 @@ public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
     protected List<Bitmap> doInBackground(String... params) {
 
         decodeService = new DecodeServiceBase(new PdfContext());
-        decodeService.setContentResolver(activity.getContentResolver());
+        decodeService.setContentResolver(Main.getAppContext().getContentResolver());
         int[] scale = new int[2];
 
         try {

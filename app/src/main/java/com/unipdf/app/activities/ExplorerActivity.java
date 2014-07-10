@@ -3,14 +3,10 @@ package com.unipdf.app.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.SparseArray;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.unipdf.app.Main;
 import com.unipdf.app.R;
 import com.unipdf.app.fragments.AvailablePDFFragment;
@@ -25,11 +21,9 @@ import com.unipdf.app.vos.LightPDF;
 
 import org.vudroid.core.DecodeService;
 import org.vudroid.core.DecodeServiceBase;
-import org.vudroid.core.codec.CodecPage;
 import org.vudroid.pdfdroid.codec.PdfContext;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExplorerActivity extends Activity
@@ -51,7 +45,7 @@ public class ExplorerActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first);
+        setContentView(R.layout.activity_explorer);
 
         if(savedInstanceState != null) {
             mAlreadyStarted = savedInstanceState.getBoolean(EXTRA_ALREADY_STARTED);

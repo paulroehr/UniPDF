@@ -19,7 +19,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import com.unipdf.app.R;
-import com.unipdf.app.adapter.LightPDF_List_Adapt;
+import com.unipdf.app.adapter.LightPDFAdapter;
 import com.unipdf.app.events.Event;
 import com.unipdf.app.events.EventListener;
 import com.unipdf.app.models.ApplicationModel;
@@ -39,7 +39,7 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
     IAvailablePDFCallbacks mIAvailablePDFCallbacks = null;
 
     private ListView mLv;
-    private LightPDF_List_Adapt mLa;
+    private LightPDFAdapter mLa;
 
     private ApplicationModel mModel;
 
@@ -116,7 +116,7 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
     }
 
     private void setListView(){
-        mLa = new LightPDF_List_Adapt(mAllPDFs,getActivity(),R.layout.list_item);
+        mLa = new LightPDFAdapter(mAllPDFs,getActivity(),R.layout.item_standard);
         mLv.setOnItemClickListener(this);
         mLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mLv.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by paul on 15.05.14.
  */
-public class Categories_List_Adapt extends BaseAdapter {
+public class CategoriesAdapter extends BaseAdapter {
 
     public static class ViewHolder {
         ImageView mImage;
@@ -31,7 +31,7 @@ public class Categories_List_Adapt extends BaseAdapter {
     private Context mContext;
     private ArrayList<Category> mItems;
 
-    public Categories_List_Adapt(Context _context, ArrayList<Category> _Items) {
+    public CategoriesAdapter(Context _context, ArrayList<Category> _Items) {
         mItems = _Items;
         mContext = _context;
     }
@@ -58,7 +58,7 @@ public class Categories_List_Adapt extends BaseAdapter {
         ViewHolder holder = null;
         if(row == null){
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.list_item, parent, false);
+            row = inflater.inflate(R.layout.item_standard, parent, false);
             holder = new ViewHolder(row);
             row.setTag(holder);
         }

@@ -3,7 +3,6 @@ package com.unipdf.app.fragments;
 
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.SparseArray;
@@ -24,13 +23,10 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.unipdf.app.Main;
 import com.unipdf.app.R;
-import com.unipdf.app.adapter.Categories_List_Adapt;
-import com.unipdf.app.adapter.LightPDF_List_Adapt;
+import com.unipdf.app.adapter.CategoriesAdapter;
 import com.unipdf.app.adapter.PreviewFavoritesAdapter;
 import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.utils.Helper;
@@ -54,7 +50,7 @@ public class PDFManagerFragment extends Fragment {
     private static final String EXTRA_CATEGORY_POS = "extraCategoryPos";
 
     private PreviewFavoritesAdapter mFavsAdapter = null;
-    private Categories_List_Adapt mCategoryAdapter = null;
+    private CategoriesAdapter mCategoryAdapter = null;
 
     private ArrayList<Category> mCategories = null;
     private ArrayList<LightPDF> mFavs = null;
@@ -194,7 +190,7 @@ public class PDFManagerFragment extends Fragment {
     }
 
     private void setFavView(){
-        mFavsAdapter = new PreviewFavoritesAdapter(mFavs, getActivity(), R.layout.preview_favorites_item);
+        mFavsAdapter = new PreviewFavoritesAdapter(mFavs, getActivity(), R.layout.item_favorites_preview);
         mGv.setOnItemClickListener(mFavClickListener);
         mGv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mGv.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -251,7 +247,7 @@ public class PDFManagerFragment extends Fragment {
     }
 
     private void setCategoryView() {
-        mCategoryAdapter = new Categories_List_Adapt(getActivity(), mCategories);
+        mCategoryAdapter = new CategoriesAdapter(getActivity(), mCategories);
         mLv.setOnItemClickListener(mCategoryClickListener);
         mLv.setOnItemLongClickListener(mCategoryLongClickListener);
         mLv.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
