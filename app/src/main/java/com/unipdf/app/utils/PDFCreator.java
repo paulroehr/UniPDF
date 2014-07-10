@@ -81,11 +81,12 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
 
             for (int i = 0; i < mPages.size(); i++) {
                 if (!isCancelled()) {
-                    CodecPage page = decodeService.getPage(i);
-                    Bitmap pageBitmap = page.renderBitmap(decodeService.getPageWidth(i), decodeService.getPageHeight(i), new RectF(0, 0, 1, 1));
+                    int pageNumber = mPages.get(i).getPage();
+                    CodecPage page = decodeService.getPage(pageNumber);
+                    Bitmap pageBitmap = page.renderBitmap(decodeService.getPageWidth(pageNumber), decodeService.getPageHeight(pageNumber), new RectF(0, 0, 1, 1));
 
                     // Bitmap auf Page zeichnen
-                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(decodeService.getPageWidth(i), decodeService.getPageHeight(i), i).create();
+                    PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(decodeService.getPageWidth(pageNumber), decodeService.getPageHeight(pageNumber), i).create();
                     PdfDocument.Page pdfPage = document.startPage(pageInfo);
                     pdfPage.getCanvas().drawBitmap(pageBitmap,0 ,0, pdfPaint);
                     // finish the page
