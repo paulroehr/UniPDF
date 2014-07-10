@@ -19,7 +19,7 @@ import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnPageChangeListener;
 import com.unipdf.app.R;
 import com.unipdf.app.adapter.ImageAdapter;
-import com.unipdf.app.adapter.ShuffleAdapter;
+import com.unipdf.app.adapter.ShufflePageAdapter;
 import com.unipdf.app.dialogs.LoadingDialog;
 import com.unipdf.app.utils.PDFCreator;
 import com.unipdf.app.utils.ThumbnailLoader;
@@ -53,7 +53,7 @@ public class WorkbenchActivity extends Activity {
     private ArrayList<ShufflePage>  mShuffleThumbnails;
     private ThumbnailLoader         mThumbnailLoader;
     private ImageAdapter            mThumbnailAdapter;
-    private ShuffleAdapter          mShuffleAdapter;
+    private ShufflePageAdapter          mShufflePageAdapter;
 
     private LoadingDialog           mLoadingDialog;
     private PDFCreator              mPDFCreator;
@@ -113,13 +113,13 @@ public class WorkbenchActivity extends Activity {
         mShuffleThumbnails = new ArrayList<ShufflePage>();
 
         mThumbnailAdapter  = new ImageAdapter(this, mThumbnails);
-        mShuffleAdapter    = new ShuffleAdapter(this, mShuffleThumbnails);
+        mShufflePageAdapter    = new ShufflePageAdapter(this, mShuffleThumbnails);
 
         mThumbnailList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         mThumbnailList.setAdapter(mThumbnailAdapter);
 
         mShuffleList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        mShuffleList.setAdapter(mShuffleAdapter);
+        mShuffleList.setAdapter(mShufflePageAdapter);
 
         mPDFView.fromFile(mFileSrc)
                 .onPageChange(mPageChangeListener)
@@ -168,7 +168,7 @@ public class WorkbenchActivity extends Activity {
             // Page aus Dokument holen und als PDPage speichern.
 
             mShuffleThumbnails.add(new ShufflePage(mThumbnails.get(mCurrentPage), mCurrentPage));
-            mShuffleAdapter.notifyDataSetChanged();
+            mShufflePageAdapter.notifyDataSetChanged();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -190,14 +190,14 @@ public class WorkbenchActivity extends Activity {
             if (_swapUp) {
                 if (mCurrentShuffle != 0) {
                     Collections.swap(mShuffleThumbnails, mCurrentShuffle, mCurrentShuffle - 1);
-                    mShuffleAdapter.notifyDataSetChanged();
+                    mShufflePageAdapter.notifyDataSetChanged();
                     mShuffleList.setItemChecked(mCurrentShuffle - 1, true);
                     mCurrentShuffle -= 1;
                 }
             } else {
                 if (mCurrentShuffle < mShuffleThumbnails.size() - 1) {
                     Collections.swap(mShuffleThumbnails, mCurrentShuffle, mCurrentShuffle + 1);
-                    mShuffleAdapter.notifyDataSetChanged();
+                    mShufflePageAdapter.notifyDataSetChanged();
                     mShuffleList.setItemChecked(mCurrentShuffle + 1, true);
                     mCurrentShuffle += 1;
                 }
@@ -270,7 +270,7 @@ public class WorkbenchActivity extends Activity {
                             mShuffleList.setItemChecked(mCurrentShuffle, false);
                             mCurrentShuffle = -1;
                             mShuffleThumbnails.clear();
-                            mShuffleAdapter.notifyDataSetChanged();
+                            mShufflePageAdapter.notifyDataSetChanged();
                         }
                     })
                     .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -308,7 +308,7 @@ public class WorkbenchActivity extends Activity {
             if(mCurrentShuffle >= 0) {
                 mShuffleList.setItemChecked(mCurrentShuffle, false);
                 mShuffleThumbnails.remove(mCurrentShuffle);
-                mShuffleAdapter.notifyDataSetChanged();
+                mShufflePageAdapter.notifyDataSetChanged();
                 mCurrentShuffle = -1;
             }
         }
