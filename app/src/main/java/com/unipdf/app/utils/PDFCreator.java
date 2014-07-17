@@ -1,17 +1,12 @@
 package com.unipdf.app.utils;
 
 import android.graphics.Bitmap;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.print.PrintAttributes;
-import android.print.pdf.PrintedPdfDocument;
-import android.view.View;
 
 import com.unipdf.app.Main;
 import com.unipdf.app.activities.WorkbenchActivity;
@@ -27,11 +22,10 @@ import org.vudroid.pdfdroid.codec.PdfContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by paul on 12.06.14.
+ * Erstellt ein neues PDF Dokument anhand der übergebenen ShufflePages.
  */
 public class PDFCreator extends AsyncTask<String, Void, Boolean> {
 
@@ -92,13 +86,15 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
                     }
                     int pageNumber = mPages.get(i).getPage();
                     CodecPage page = decodeService.getPage(pageNumber);
+
+                    // Seite wird als Bitmap gerendet
                     Bitmap pageBitmap = page.renderBitmap(decodeService.getPageWidth(pageNumber), decodeService.getPageHeight(pageNumber), new RectF(0, 0, 1, 1));
 
                     // Bitmap auf Page zeichnen
                     PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(decodeService.getPageWidth(pageNumber), decodeService.getPageHeight(pageNumber), i).create();
                     PdfDocument.Page pdfPage = document.startPage(pageInfo);
                     pdfPage.getCanvas().drawBitmap(pageBitmap,0 ,0, pdfPaint);
-                    // finish the page
+                    // Beenden der aktuellen Seite
                     document.finishPage(pdfPage);
 
                 } else {
@@ -108,9 +104,9 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
 
             String path = file.getPath() + File.separator + mPDFName + ".pdf";
             OutputStream os = new FileOutputStream(path);
-            // write the document content
+            // Schreibt PDF in das FileSystem
             document.writeTo(os);
-            //close the document
+            // Schließt das Dokument
             document.close();
 
             LightPDF lightPDF = new LightPDF(null, mPDFName + ".pdf", Uri.fromFile(new File(path)));

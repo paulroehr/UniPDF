@@ -1,17 +1,15 @@
 package com.unipdf.app.models;
 
-import android.util.Log;
-
-import java.util.ArrayList;
-
 import com.unipdf.app.events.EventDispatcher;
 import com.unipdf.app.events.SimpleEvent;
 import com.unipdf.app.vos.Category;
 import com.unipdf.app.vos.LightPDF;
 import com.unipdf.app.vos.ShufflePage;
 
+import java.util.ArrayList;
+
 /**
- * Created by schotte on 17.04.14.
+ * Globales Daten Model der App als Singleton.
  */
 public class ApplicationModel extends EventDispatcher {
 

@@ -12,6 +12,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+/**
+ * Vereinfachtes PDF Modell.
+ */
 @DatabaseTable(tableName = "LightPDF")
 public class LightPDF implements Parcelable, Comparable {
 
@@ -25,7 +28,6 @@ public class LightPDF implements Parcelable, Comparable {
 
     private Bitmap mPicture;
 
-//    @DatabaseField( columnName = COLUMN_PICTURE, dataType = DataType.BYTE_ARRAY, canBeNull = true, useGetSet = true)
     private byte[] mPictureByteArray;
 
     @DatabaseField( columnName = COLUMN_NAME, canBeNull = false)

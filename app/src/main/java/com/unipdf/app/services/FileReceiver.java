@@ -3,14 +3,15 @@ package com.unipdf.app.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 
 import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.vos.LightPDF;
 
 import java.util.ArrayList;
 
+/**
+ * Speichert empfangene PDF's in dem ApplicationModel.
+ */
 public class FileReceiver extends BroadcastReceiver {
 
     public static final String ACTION_FIND_PDFS = "actionFindPDFs";

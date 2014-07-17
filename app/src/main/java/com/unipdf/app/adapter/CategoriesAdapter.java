@@ -14,7 +14,7 @@ import com.unipdf.app.vos.Category;
 import java.util.ArrayList;
 
 /**
- * Created by paul on 15.05.14.
+ * Adapter für Kategorien
  */
 public class CategoriesAdapter extends BaseAdapter {
 

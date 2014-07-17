@@ -3,6 +3,9 @@ package com.unipdf.app.vos;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+/**
+ * Mapping Klasse zwischen PDF und Kategorie.
+ */
 @DatabaseTable(tableName = "CategoryPDFMap")
 public class CategoryPDFMap {
 

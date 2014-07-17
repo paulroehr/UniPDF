@@ -5,7 +5,7 @@ import android.net.Uri;
 
 
 /**
- * Created by paul on 10.07.14.
+ * Modell für die Shuffle Darstellung.
  */
 public class ShufflePage {
 

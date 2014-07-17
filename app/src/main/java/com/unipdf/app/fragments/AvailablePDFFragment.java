@@ -1,9 +1,8 @@
 package com.unipdf.app.fragments;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
+import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -16,9 +15,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.unipdf.app.R;
 import com.unipdf.app.adapter.LightPDFAdapter;
 import com.unipdf.app.events.Event;
@@ -26,15 +22,21 @@ import com.unipdf.app.events.EventListener;
 import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.vos.LightPDF;
 
+import java.util.ArrayList;
 
+/**
+ * Dient zur Anzeige aller Verfügbaren PDF's auf dem Host-System.
+ */
 public class AvailablePDFFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    /**
+     * Interface für den Datenaustausch zwischen Activity und Fragment.
+     */
     public interface IAvailablePDFCallbacks {
         public void onItemShortClickAvailablePDF(LightPDF _lightPDF);
         public void onSendCopyList(SparseArray<LightPDF> _CopyList);
     }
 
-    //eventuell muss eine Parcebel list erstellt werden
     ArrayList<LightPDF> mAllPDFs = null;
     SparseArray<LightPDF> mCopyList = null;
     IAvailablePDFCallbacks mIAvailablePDFCallbacks = null;
@@ -63,7 +65,6 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        outState.putParcelableArrayList("LightPDFAllList", mAllPDFs);
         outState.putSparseParcelableArray("CopyList", mCopyList);
     }
 
@@ -77,12 +78,9 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         if(savedInstanceState != null){
-//            mAllPDFs = savedInstanceState.getParcelableArrayList("LightPDFAllList");
             mCopyList = savedInstanceState.getSparseParcelableArray("CopyList");
-            Log.d("Test", "Restored");
         }
 
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_all_list, container, false);
         mLv = (ListView) v.findViewById(R.id.all_list_View);
         setListView();
@@ -92,6 +90,9 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
         return v;
     }
 
+    /**
+     * PDF Liste und deren Position wird aktualisiert.
+     */
     public void notifyListChange() {
         // Adapter wird informaiert das Daten geändert wurden und lädt diese neu in die View.
         mLa.notifyDataSetChanged();
@@ -116,6 +117,9 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
         ApplicationModel.getInstance().removeListener(ApplicationModel.ChangeEvent.EVENT_RECEIVED_PDFS, mReceivedNewPDFsListener);
     }
 
+    /**
+     * Initialisierung der ListView und setzen der Auswahlmodi.
+     */
     private void setListView(){
         mLa = new LightPDFAdapter(mAllPDFs,getActivity(),R.layout.item_standard);
         mLv.setOnItemClickListener(this);
@@ -155,6 +159,11 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
         mLv.setAdapter(mLa);
     }
 
+    /**
+     * Entfernt oder Setzt gegebene Position in die Kopier Liste, anhand des gesetzten _Checked Flags.
+     * @param _Pos      Listen Position
+     * @param _Checked  Flag zur Indikation ob Position schon gesetzt ist oder nicht
+     */
     private void changeCopyList(int _Pos, boolean _Checked) {
         if(_Checked) {
             mCopyList.put(_Pos, mAllPDFs.get(_Pos));
@@ -165,6 +174,11 @@ public class AvailablePDFFragment extends Fragment implements AdapterView.OnItem
     }
 
     private EventListener mReceivedNewPDFsListener = new EventListener() {
+
+        /**
+         * Wenn neue PDF's vorhanden sind, wird die Liste aktualisiert.
+         * @param event
+         */
         @Override
         public void onEvent(Event event) {
             notifyListChange();

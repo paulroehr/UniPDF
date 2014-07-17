@@ -1,26 +1,21 @@
 package com.unipdf.app;
 
 import android.app.Application;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Environment;
 import android.util.Log;
 
 import com.unipdf.app.db.DatabaseHelper;
 import com.unipdf.app.models.ApplicationModel;
-import com.unipdf.app.services.FileCrawlerService;
-import com.unipdf.app.services.FileReceiver;
 import com.unipdf.app.vos.Category;
 import com.unipdf.app.vos.CategoryPDFMap;
 import com.unipdf.app.vos.LightPDF;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by schotte on 17.04.14.
+ * Genereller Einstiegspunkt der App. Initialisiert die Datenbank und lädt diese.
  */
 public class Main extends Application {
 

@@ -8,14 +8,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.unipdf.app.R;
 import com.unipdf.app.vos.LightPDF;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
- * Created by schotte on 06.05.14.
+ * Adapter zur Anzeige von LightPDF's mit PDF Icon und den Namen der PDF
  */
 public class LightPDFAdapter extends BaseAdapter{
 

@@ -1,0 +1,11 @@
+com.unipdf.app
+com.unipdf.app.activities
+com.unipdf.app.adapter
+com.unipdf.app.db
+com.unipdf.app.dialogs
+com.unipdf.app.events
+com.unipdf.app.fragments
+com.unipdf.app.models
+com.unipdf.app.services
+com.unipdf.app.utils
+com.unipdf.app.vos

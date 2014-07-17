@@ -1,1 +1,2 @@
 - loadAll für komplette PDFs in shuffle
+- Compress Verfahren für erstellte PDF's

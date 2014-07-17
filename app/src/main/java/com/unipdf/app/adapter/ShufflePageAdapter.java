@@ -14,7 +14,7 @@ import com.unipdf.app.vos.ShufflePage;
 import java.util.List;
 
 /**
- * Created by paul on 10.07.14.
+ * Anzeige der ShuffleThumbnails und Seitenanzahl
  */
 public class ShufflePageAdapter extends BaseAdapter {
     public static class ViewHolder {

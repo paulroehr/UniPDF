@@ -1,14 +1,9 @@
 package com.unipdf.app.utils;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 
 import com.unipdf.app.Main;
 import com.unipdf.app.activities.WorkbenchActivity;
@@ -18,15 +13,11 @@ import org.vudroid.core.DecodeServiceBase;
 import org.vudroid.core.codec.CodecPage;
 import org.vudroid.pdfdroid.codec.PdfContext;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by paul on 12.06.14.
+ * Generiert Thumbnails aus gegebener PDF Datei.
  */
 public class ThumbnailLoader extends AsyncTask<String, Bitmap, List<Bitmap>> {
 

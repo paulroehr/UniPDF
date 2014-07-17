@@ -14,7 +14,7 @@ import com.unipdf.app.R;
 import java.util.List;
 
 /**
- * Created by paul on 12.06.14.
+ * Adapter zur Anzeige von Bildern mit Untertiteln
  */
 public class ImageAdapter extends BaseAdapter {
 

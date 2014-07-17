@@ -16,7 +16,7 @@ import com.unipdf.app.vos.LightPDF;
 import java.util.ArrayList;
 
 /**
- * Created by schotte on 06.05.14.
+ * Favoriten Adapter mit Asynchroner Thumbnail Generierung
  */
 public class PreviewFavoritesAdapter extends BaseAdapter{
 

@@ -2,10 +2,6 @@ package com.unipdf.app.utils;
 
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.os.Parcel;
-import android.util.Log;
-
-import com.unipdf.app.vos.LightPDF;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,14 +9,8 @@ import java.util.Stack;
 
 
 /**
- * Created by markus on 13.05.14.
+ * Traversiert durch das FileSystem und sucht alle PDF Dateien.
  */
-
-// this is a helper class
-// I traverse the directory tree
-// first the directories documents, downloads
-//
-
 public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>{
 
     public interface IPDFFinderListener {
@@ -34,11 +24,6 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
 
     private ArrayList<File> mPDFList;
     private Stack<File> mDirectories;
-
-//    private File mDataDir;
-    private File mDownloadCacheDir;
-
-    private File mCurrentDir;
 
     private File mExternal;
 
@@ -54,15 +39,6 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         mExternal = Environment.getExternalStorageDirectory();
 
         mMaxSizeOfPdfList = DEFAULT_MAX_SIZE;
-    }
-
-    public PDFFinder(int _SizeOfPdfList) {
-        mPDFList = new ArrayList<File>();
-        mDirectories = new Stack<File>();
-
-        mExternal = Environment.getExternalStorageDirectory();
-
-        mMaxSizeOfPdfList = _SizeOfPdfList;
     }
 
     public void setListener(IPDFFinderListener _Listener) {
@@ -88,6 +64,9 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         mListener.onFinish();
     }
 
+    /**
+     * Alle Ordner werden durchsucht und auf einen Stack gelegt.
+     */
     private void traverseDirs() {
 
         if ( (mExternal != null) && mExternal.isDirectory() ) {
@@ -104,6 +83,12 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         }
     }
 
+    /**
+     * Durchsucht aktuellen Ordner nach ODF Dateien und wenn neue Ordner gefunden werden, werden diese auf den OrdnerStack gelegt.
+     * PDF's werden in eine Liste eingetragen und wenn diese die vorgegebene Anzahl überschreitet, werden die gefundenen weitergegeben.
+     * @param _Directory Der zu durchsuchende Ordner
+     * @throws IllegalArgumentException
+     */
     private void traversePath(File _Directory) throws IllegalArgumentException {
 
         if ( ! _Directory.isDirectory()) {
@@ -129,22 +114,18 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
         }
     }
 
+    /**
+     * Leert PDF Liste.
+     */
     public void clearPdfList() {
         mPDFList.clear();
     }
 
+    /**
+     *
+     * @return Liefert Größe der PDF Liste.
+     */
     public int getSizeOfPdfList() {
         return mPDFList.size();
-    }
-
-
-    public ArrayList<File> getPdfList() {
-        return mPDFList;
-    }
-
-    public ArrayList<File> getPdfListAndClear() {
-        ArrayList<File> temp = getPdfList();
-        clearPdfList();
-        return temp;
     }
 }

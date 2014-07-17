@@ -1,10 +1,8 @@
 package com.unipdf.app.fragments;
 
-
-
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -23,8 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 import com.unipdf.app.R;
 import com.unipdf.app.adapter.CategoriesAdapter;
 import com.unipdf.app.adapter.PreviewFavoritesAdapter;
@@ -33,9 +29,16 @@ import com.unipdf.app.utils.Helper;
 import com.unipdf.app.vos.Category;
 import com.unipdf.app.vos.LightPDF;
 
+import java.util.ArrayList;
 
+/**
+ * Verwaltung der erstellten Kategorien und deren Favoriten.
+ */
 public class PDFManagerFragment extends Fragment {
 
+    /**
+     * Dient zur Kommunikation zwischen Activity und Fragment.
+     */
     public interface IPDFManagerCallbacks {
         public void onItemShortClickFavoritedPDF(LightPDF _lightPDF);
         public void addCategory(Category _Category);
@@ -172,6 +175,10 @@ public class PDFManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * Fügt ausgewählte PDF's zur aktuellen Kategorie hinzu.
+     * @param _PDFs Ausgewählte PDF's
+     */
     public void addFavsToCurrentCategory(ArrayList<LightPDF> _PDFs) {
         if(!mCategories.isEmpty()) {
             for (LightPDF pdf : _PDFs) {
@@ -189,6 +196,9 @@ public class PDFManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * Initialisierung der Favoriten Ansicht.
+     */
     private void setFavView(){
         mFavsAdapter = new PreviewFavoritesAdapter(mFavs, getActivity(), R.layout.item_favorites_preview);
         mGv.setOnItemClickListener(mFavClickListener);
@@ -228,6 +238,9 @@ public class PDFManagerFragment extends Fragment {
         mGv.setAdapter(mFavsAdapter);
     }
 
+    /**
+     * Entfernt ausgewählte PDF's von der aktuellen Kategorie.
+     */
     private void deleteSelectedPDFsFromCategory() {
         for (int index = 0; index < mDeleteList.size(); index++) {
             mIPDFManagerCallbacks.deletePDFFromCategory(mCurrentCategory, mDeleteList.valueAt(index));
@@ -237,6 +250,11 @@ public class PDFManagerFragment extends Fragment {
         mFavsAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Entfernt oder Setzt gegebene Position in die Lösch Liste, anhand des gesetzten _Checked Flags.
+     * @param _Pos      Listen Position
+     * @param _Checked  Flag zur Indikation ob Position schon gesetzt ist oder nicht
+     */
     private void changeDeleteList(int _Pos, boolean _Checked) {
         if(_Checked) {
             mDeleteList.put(_Pos, mFavs.get(_Pos));
@@ -246,6 +264,9 @@ public class PDFManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * Initialiserung der Kategorien Ansicht
+     */
     private void setCategoryView() {
         mCategoryAdapter = new CategoriesAdapter(getActivity(), mCategories);
         mLv.setOnItemClickListener(mCategoryClickListener);
@@ -255,6 +276,11 @@ public class PDFManagerFragment extends Fragment {
         mLv.setItemChecked(mCategoryListPos, true);
     }
 
+    /**
+     * Überprüfung ob gewählte Kategorie schon vorhanden ist.
+     * @param _Name Zu Überprüfende Kategorie
+     * @return true wenn schon vorhanden
+     */
     private boolean checkForExisitingCategory(String _Name) {
         for (Category category : mModel.getCategories()) {
             if(category.getCategoryName().equals(_Name)) {
@@ -264,6 +290,9 @@ public class PDFManagerFragment extends Fragment {
         return false;
     }
 
+    /**
+     * Erstellt neue Kategorie falls noch nicht vorhanden.
+     */
     private void addNewCategory() {
         String categoryName = mCategoryName.getText().toString();
 
@@ -287,14 +316,25 @@ public class PDFManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * Wenn neue Kategorie ausgewählt wird, werden die Favoriten aktualisiert.
+     * @param _Position Kategorie Position in der Liste
+     */
     private void updateFavs(int _Position) {
-      //  Log.d(LOG_TAG, "Position: "+_Position);
         mCategoryListPos = _Position;
         mCurrentCategory = mCategories.get(_Position);
         mFavs = mCurrentCategory.getLightPDFs();
     }
 
     private AdapterView.OnItemClickListener mCategoryClickListener = new AdapterView.OnItemClickListener() {
+
+        /**
+         * Wenn auf Kategorie Listen Item geklickt wurde, wird neue Kategorie mit den enthaltenen PDF's geladen.
+         * @param parent
+         * @param view
+         * @param position
+         * @param id
+         */
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             updateFavs(position);
@@ -304,6 +344,11 @@ public class PDFManagerFragment extends Fragment {
     };
 
     private View.OnClickListener mAddButtonListener = new View.OnClickListener() {
+
+        /**
+         * Startet das hinzufügen einer neuen Kategorie.
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             if(mIsInRenameMode) {
@@ -328,6 +373,14 @@ public class PDFManagerFragment extends Fragment {
     };
 
     private AdapterView.OnItemClickListener mFavClickListener = new AdapterView.OnItemClickListener() {
+
+        /**
+         * Wenn auf ein Favorit geklickt wird, wird die Activity benachrichtigt und startet die Workbench.
+         * @param parent
+         * @param view
+         * @param position
+         * @param id
+         */
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             mIPDFManagerCallbacks.onItemShortClickFavoritedPDF(mFavs.get(position));
@@ -335,6 +388,15 @@ public class PDFManagerFragment extends Fragment {
     };
 
     private AdapterView.OnItemLongClickListener mCategoryLongClickListener = new AdapterView.OnItemLongClickListener() {
+
+        /**
+         * Setzt die Position des Items welches den LongClick abfing.
+         * @param parent
+         * @param view
+         * @param position
+         * @param id
+         * @return
+         */
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             mRenamePos = position;

@@ -2,10 +2,7 @@ package com.unipdf.app.services;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.net.Uri;
-import android.os.SystemClock;
-import android.util.Log;
 
 import com.unipdf.app.utils.PDFFinder;
 import com.unipdf.app.vos.LightPDF;
@@ -13,7 +10,9 @@ import com.unipdf.app.vos.LightPDF;
 import java.io.File;
 import java.util.ArrayList;
 
-
+/**
+ * Startet die Suche nach PDF's in dem FileSystem und benachrichtigt den BroadcastReceiver bei Erhalt neuer PDF's.
+ */
 public class FileCrawlerService extends IntentService {
 
     public static final String LOG_TAG = FileCrawlerService.class.getSimpleName();

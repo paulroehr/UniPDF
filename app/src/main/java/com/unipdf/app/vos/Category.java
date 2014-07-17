@@ -1,15 +1,17 @@
 package com.unipdf.app.vos;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
 
+
+/**
+ * Kategorien Modell.
+ */
 @DatabaseTable(tableName = "Category")
 public class Category implements Parcelable {
 

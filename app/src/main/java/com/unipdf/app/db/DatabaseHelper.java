@@ -13,6 +13,9 @@ import com.unipdf.app.vos.LightPDF;
 
 import java.sql.SQLException;
 
+/**
+ * Schnittestelle zur Datenbank und deren DAO Objekte.
+ */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DB_NAME = "unipdf.db";
@@ -52,6 +55,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    /**
+     *
+     * @return Rückgabe des Kategorien DAO Objektes
+     */
     public Dao<Category, Long> getCategoryDao() {
         if (mCategoryDao == null) {
             try {
@@ -63,6 +70,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mCategoryDao;
     }
 
+    /**
+     *
+     * @return Rückgabe des LightPDF DAO Objektes
+     */
     public Dao<LightPDF, Long> getLightPDFDao() {
         if (mLightPDFDao == null) {
             try {
@@ -74,6 +85,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return mLightPDFDao;
     }
 
+    /**
+     * Auflösung der m zu n Beziehungen
+     * @return Rückgabe des Mapping DAO Objektes zwischen Kategorien und LightPDF's
+     */
     public Dao<CategoryPDFMap, Long> getMappingDao() {
         if (mMappingDao == null) {
             try {

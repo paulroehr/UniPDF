@@ -7,17 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.unipdf.app.Main;
 import com.unipdf.app.R;
 
 
 /**
- * Created by paul on 09/05/14.
+ * Dialog zur Indikation des Speichervorgangs
  */
 public class LoadingDialog extends DialogFragment {
 

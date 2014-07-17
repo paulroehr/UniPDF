@@ -1,9 +1,9 @@
 package com.unipdf.app.events;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import android.util.Log;
 
 
 public class EventDispatcher implements Dispatcher {

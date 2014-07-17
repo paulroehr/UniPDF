@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.SparseArray;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.j256.ormlite.dao.Dao;
 import com.unipdf.app.Main;
@@ -28,6 +26,11 @@ import org.vudroid.pdfdroid.codec.PdfContext;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Einstiegs-Activity. Beeinhaltet 2 Fragments, welche alle vorhandenen PDF's auf dem Gerät anzeigt beziehungsweise
+ * deren Verwaltung durch Kategorien. Kümmert sich um die persistente Speicherung der Kategorien und deren zugehörigen PDF's.
+ *
+ */
 public class ExplorerActivity extends Activity
         implements AvailablePDFFragment.IAvailablePDFCallbacks,
         PDFManagerFragment.IPDFManagerCallbacks {
@@ -108,6 +111,11 @@ public class ExplorerActivity extends Activity
         startService(msgIntent);
     }
 
+    /**
+     * Überprüft ob die PDF beschädigt ist.
+     * @param _pdf Die zu überpfrüfende PDF
+     * @return true wenn beschädigt
+     */
     private boolean checkPdf(LightPDF _pdf) {
         DecodeService decodeService = new DecodeServiceBase(new PdfContext());
         decodeService.setContentResolver(this.getContentResolver());
@@ -123,6 +131,10 @@ public class ExplorerActivity extends Activity
         return true;
     }
 
+    /**
+     * Startet die Workbench mit den ausgewählten PDF.
+     * @param _pdf PDF welches ausgewählt wurde
+     */
     private void startWorkbench(LightPDF _pdf) {
 
         if(checkPdf(_pdf)) {
@@ -136,13 +148,22 @@ public class ExplorerActivity extends Activity
     }
 
     //##############################################################################################
-    // All_List_Frag
+    // AvailablaePDFFragment
     //##############################################################################################
+
+    /**
+     * Wird nach Klick auf PDF in der Gesamt Liste aufgerufen. Startet die Workbench
+     * @param _lightPDF Ausgewählte PDF
+     */
     @Override
     public void onItemShortClickAvailablePDF(LightPDF _lightPDF) {
         startWorkbench(_lightPDF);
     }
 
+    /**
+     * Weist ausgewählte PDF's der markierten Kategorie zu.
+     * @param _CopyList Ausgewählte PDF's
+     */
     @Override
     public void onSendCopyList(SparseArray<LightPDF> _CopyList) {
         Helper.convertSparseToArrayList(_CopyList, ApplicationModel.getInstance().getCopyPDFs());
@@ -153,13 +174,22 @@ public class ExplorerActivity extends Activity
 
 
     //##############################################################################################
-    // Fav_List_frag
+    // PDFManagerFragment
     //##############################################################################################
+
+    /**
+     * Wird nach Klick auf PDF in der Favoriten Liste aufgerufen. Startet die Workbench
+     * @param _lightPDF Ausgewählte PDF
+     */
     @Override
     public void onItemShortClickFavoritedPDF(LightPDF _lightPDF) {
         startWorkbench(_lightPDF);
     }
 
+    /**
+     * Umbennenung der ausgewählten Kategorie
+     * @param _Category Ausgewählte Kategorie
+     */
     @Override
     public void updateCurrentCategory(Category _Category) {
         try {
@@ -169,6 +199,10 @@ public class ExplorerActivity extends Activity
         }
     }
 
+    /**
+     * Ausgewählte Kategorie wird gelöscht und alle Mapping Beziehungen entfernt.
+     * @param _Category Ausgewählte Kategorie
+     */
     @Override
     public void deleteCategory(Category _Category) {
         try {
@@ -186,6 +220,10 @@ public class ExplorerActivity extends Activity
         }
     }
 
+    /**
+     * Neue Kategorie wird angelegt.
+     * @param _Category Anzulegende Kategorie
+     */
     @Override
     public void addCategory(Category _Category) {
         try {
@@ -195,6 +233,11 @@ public class ExplorerActivity extends Activity
         }
     }
 
+    /**
+     * PDF wird der ausgewählten Kategorie hinzugefügt.
+     * @param _Category Ausgewählte Kategorie
+     * @param _PDF  Zu Verknüpfende PDF
+     */
     @Override
     public void addPDFToCategory(Category _Category, LightPDF _PDF) {
         try {
@@ -215,11 +258,15 @@ public class ExplorerActivity extends Activity
         }
     }
 
+    /**
+     * PDF wird aus der ausgewählten Kategorie entfernt.
+     * @param _Category Ausgewählte Kategorie
+     * @param _PDF  Zu entfernende PDF
+     */
     @Override
     public void deletePDFFromCategory(Category _Category, LightPDF _PDF) {
 
         try {
-            // TODO: Schöner bauen
             Dao<CategoryPDFMap, Long> mappingDao = Main.getDbHelper().getMappingDao();
             List<CategoryPDFMap> list = mappingDao.queryForEq(CategoryPDFMap.COLUMN_CATEGORY, _Category);
 

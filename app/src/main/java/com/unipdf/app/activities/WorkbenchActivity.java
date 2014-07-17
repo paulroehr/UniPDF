@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +29,12 @@ import com.unipdf.app.vos.LightPDF;
 import com.unipdf.app.vos.ShufflePage;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Dient zur Betrachtung der ausgewählten PDF und der Bearbeitung.
+ */
 public class WorkbenchActivity extends Activity {
 
     private ApplicationModel mModel;
@@ -62,9 +63,6 @@ public class WorkbenchActivity extends Activity {
     private LoadingDialog           mLoadingDialog;
     private PDFCreator              mPDFCreator;
 
-
-//    File mCpy = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,19 +75,6 @@ public class WorkbenchActivity extends Activity {
         getActionBar().setTitle(mPDF.getmName().substring(0, mPDF.getmName().length()-4));
 
         mFileSrc = new File(mPDF.getFilePath().getPath());
-//        mCpy = null;
-//        try {
-//            File file  = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "UniPDF");
-//            if(!file.exists()) {
-//                file.mkdirs();
-//            }
-//
-//            mCpy = new File(Environment.getExternalStorageDirectory() + File.separator + "UniPDF" + File.separator + src.getName());
-//            Helper.copy(src, mCpy);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
 
         mThumbnailList = (ListView) findViewById(R.id.thumbnailList);
         mShuffleList = (ListView) findViewById(R.id.shuffleList);
@@ -174,6 +159,9 @@ public class WorkbenchActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Startet die PDF View.
+     */
     private void initializePDFView() {
         mPDFView.fromFile(mFileSrc)
                 .onPageChange(mPageChangeListener)
@@ -183,6 +171,10 @@ public class WorkbenchActivity extends Activity {
                 .load();
     }
 
+    /**
+     * Aktiviert/Deaktiviert die Ladeanimation.
+     * @param _showLoading Toggle
+     */
     private void switchVisibility(boolean _showLoading) {
         if(_showLoading) {
             mPDFView.setVisibility(View.GONE);
@@ -194,6 +186,10 @@ public class WorkbenchActivity extends Activity {
         }
     }
 
+    /**
+     * Wechselt benachberte Elemente der ShuffleList aus.
+     * @param _swapUp Richtung der Verschiebung
+     */
     private void swapThumbnails(boolean _swapUp) {
         if(!mModel.getShuffleThumbnails().isEmpty() && mCurrentShuffle >= 0) {
             if (_swapUp) {
@@ -215,6 +211,10 @@ public class WorkbenchActivity extends Activity {
         }
     }
 
+    /**
+     * Generiert ein neues PDF
+     * @param _name Name der PDF
+     */
     private void generateNewPDF(String _name) {
         mPDFCreator = new PDFCreator();
         mPDFCreator.setListener(mCreatorListener);
@@ -224,6 +224,10 @@ public class WorkbenchActivity extends Activity {
         mPDFCreator.execute(new String[]{});
     }
 
+    /**
+     * Initiert die generierung des neuen PDF's und triggert den Lade Dialog.
+     * @param _name Name der PDF
+     */
     private void buildNewPDF(String _name) {
         mPDFView.recycle();
         mLoadingDialog = new LoadingDialog();
@@ -231,6 +235,9 @@ public class WorkbenchActivity extends Activity {
         generateNewPDF(_name);
     }
 
+    /**
+     * Zurücksetzen der ShuffleList und allen daraus resultierenden Einstellungen.
+     */
     private void clearShuffleList() {
         mShuffleList.setItemChecked(mCurrentShuffle, false);
         mCurrentShuffle = -1;
@@ -239,21 +246,32 @@ public class WorkbenchActivity extends Activity {
     }
 
     private ThumbnailLoader.IThumbnailLoaderListener mLoaderListener = new ThumbnailLoader.IThumbnailLoaderListener() {
+
+        /**
+         * Bekommt neues Thumbnail Bitmap übergeben, sobald das Rendering fertig ist.
+         * @param _Bitmap Generierte Thumbnail
+         */
         @Override
         public void onProgress(Bitmap _Bitmap) {
             mThumbnails.add(_Bitmap);
             mThumbnailAdapter.notifyDataSetChanged();
         }
 
+        /**
+         * Deaktivierung der Ladeoberfläche
+         */
         @Override
         public void onFinish() {
-//            mCpy.delete();
             mThumbnailAdapter.notifyDataSetChanged();
             switchVisibility(false);
         }
     };
 
     private PDFCreator.IPDFCreatorListener mCreatorListener = new PDFCreator.IPDFCreatorListener() {
+
+        /**
+         * Deaktivierung des Lade Dialogs und neu Initialisierung der PDF View
+         */
         @Override
         public void onFinish() {
             mLoadingDialog.dismiss();
@@ -263,6 +281,11 @@ public class WorkbenchActivity extends Activity {
     };
 
     private View.OnClickListener mUpListener = new View.OnClickListener() {
+
+        /**
+         * Verschiebt ShufflePage nach oben
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             swapThumbnails(true);
@@ -270,6 +293,11 @@ public class WorkbenchActivity extends Activity {
     };
 
     private View.OnClickListener mDownListener = new View.OnClickListener() {
+
+        /**
+         * Verschiebt ShufflePage nach unten
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             swapThumbnails(false);
@@ -277,6 +305,11 @@ public class WorkbenchActivity extends Activity {
     };
 
     private View.OnClickListener mNewListener = new View.OnClickListener() {
+
+        /**
+         * Löscht bisherige Shuffle Pages und started neues Dokument
+         * @param v
+         */
         @Override
         public void onClick(View v) {
 
@@ -313,6 +346,11 @@ public class WorkbenchActivity extends Activity {
     };
 
     private View.OnClickListener mSaveListener = new View.OnClickListener() {
+
+        /**
+         * Öffnet Dialog zur Eingabe des Namens der neuen PDF und initiert dessen Generierung.
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             if(!mModel.getShuffleThumbnails().isEmpty()) {
@@ -340,6 +378,11 @@ public class WorkbenchActivity extends Activity {
     };
 
     private View.OnClickListener mDeleteListener = new View.OnClickListener() {
+
+        /**
+         * Löscht ausgewählte ShufflePage aus der Liste
+         * @param v
+         */
         @Override
         public void onClick(View v) {
             if(mCurrentShuffle >= 0) {
@@ -352,6 +395,12 @@ public class WorkbenchActivity extends Activity {
     };
 
     private OnPageChangeListener mPageChangeListener = new OnPageChangeListener() {
+
+        /**
+         * Scrollt die Liste zu der ausgewählten Seite
+         * @param page      the new page displayed, starting from 1
+         * @param pageCount the total page count, starting from 1
+         */
         @Override
         public void onPageChanged(int page, int pageCount) {
             mCurrentPage = page - 1;

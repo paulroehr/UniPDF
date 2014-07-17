@@ -3,7 +3,6 @@ package com.unipdf.app.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
@@ -17,7 +16,7 @@ import org.vudroid.core.codec.CodecPage;
 import org.vudroid.pdfdroid.codec.PdfContext;
 
 /**
- * Created by paul on 03.07.14.
+ * Generiert Vorschaubild der Favoriten.
  */
 public class PreviewLoader {
 
