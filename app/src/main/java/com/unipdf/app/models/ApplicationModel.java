@@ -8,6 +8,7 @@ import com.unipdf.app.events.EventDispatcher;
 import com.unipdf.app.events.SimpleEvent;
 import com.unipdf.app.vos.Category;
 import com.unipdf.app.vos.LightPDF;
+import com.unipdf.app.vos.ShufflePage;
 
 /**
  * Created by schotte on 17.04.14.
@@ -60,6 +61,16 @@ public class ApplicationModel extends EventDispatcher {
     }
 
     //##############################################################################################
+
+    public ArrayList<ShufflePage> getShuffleThumbnails() {
+        return mShuffleThumbnails;
+    }
+
+    public void setShuffleThumbnails(ArrayList<ShufflePage> _shuffleThumbnails) {
+        mShuffleThumbnails = _shuffleThumbnails;
+    }
+
+    //##############################################################################################
     public static ApplicationModel getInstance() {
         if(ourInstance == null) {
             ourInstance = new ApplicationModel();
@@ -75,13 +86,12 @@ public class ApplicationModel extends EventDispatcher {
         mPDFs = new ArrayList<LightPDF>();
         mCopyPDFs = new ArrayList<LightPDF>();
         mCategories = new ArrayList<Category>();
-//
-//        mCategories.add(new Category(new ArrayList<LightPDF>(), "Action", 0, null));
-//        mCategories.add(new Category(new ArrayList<LightPDF>(), "Drama", 1, null));
+        mShuffleThumbnails = new ArrayList<ShufflePage>();
     }
 
     private static ApplicationModel ourInstance = null;
-    private ArrayList<LightPDF> mPDFs;
-    private ArrayList<LightPDF> mCopyPDFs;
-    private ArrayList<Category> mCategories;
+    private ArrayList<LightPDF>     mPDFs;
+    private ArrayList<LightPDF>     mCopyPDFs;
+    private ArrayList<Category>     mCategories;
+    private ArrayList<ShufflePage>  mShuffleThumbnails;
 }

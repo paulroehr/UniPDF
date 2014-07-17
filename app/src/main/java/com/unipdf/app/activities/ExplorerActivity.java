@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.SparseArray;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.j256.ormlite.dao.Dao;
 import com.unipdf.app.Main;
@@ -77,14 +79,10 @@ public class ExplorerActivity extends Activity
         if(!mAlreadyStarted) {
             mAlreadyStarted = true;
 
-            // Wenn neue Daten geladen werden sollen alte rausgehauen werden.
-            ApplicationModel.getInstance().getPDFs().clear();
-
-            // Service wird gestartet
-            Intent msgIntent = new Intent(this, FileCrawlerService.class);
-            msgIntent.putExtra(FileCrawlerService.KEY_FILE_CRAWLER, FileCrawlerService.ACTION_SEARCH_ALL);
-            startService(msgIntent);
+           loadPDFs();
         }
+
+        mAlf.notifyListChange();
 
     }
 
@@ -98,6 +96,16 @@ public class ExplorerActivity extends Activity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(EXTRA_ALREADY_STARTED, mAlreadyStarted);
+    }
+
+    private void loadPDFs() {
+        // Wenn neue Daten geladen werden sollen alte rausgehauen werden.
+        ApplicationModel.getInstance().getPDFs().clear();
+
+        // Service wird gestartet
+        Intent msgIntent = new Intent(this, FileCrawlerService.class);
+        msgIntent.putExtra(FileCrawlerService.KEY_FILE_CRAWLER, FileCrawlerService.ACTION_SEARCH_ALL);
+        startService(msgIntent);
     }
 
     private boolean checkPdf(LightPDF _pdf) {

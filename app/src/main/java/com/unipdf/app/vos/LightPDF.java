@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 @DatabaseTable(tableName = "LightPDF")
-public class LightPDF implements Parcelable{
+public class LightPDF implements Parcelable, Comparable {
 
     public static final String COLUMN_NAME      = "NAME";
     public static final String COLUMN_PICTURE   = "PICTURE";
@@ -142,4 +142,10 @@ public class LightPDF implements Parcelable{
             return new LightPDF[size];
         }
     };
+
+    @Override
+    public int compareTo(Object another) {
+        LightPDF pdf = (LightPDF) another;
+        return this.getmName().toUpperCase().compareTo(pdf.getmName().toUpperCase());
+    }
 }

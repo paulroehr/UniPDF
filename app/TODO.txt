@@ -1,1 +1,1 @@
-- Namen für neues PDF aussuchen
+- loadAll für komplette PDFs in shuffle

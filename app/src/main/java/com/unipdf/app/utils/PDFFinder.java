@@ -98,7 +98,10 @@ public class PDFFinder extends AsyncTask<Void, ArrayList<File>, ArrayList<File>>
             File temp = mDirectories.pop();
             traversePath(temp);
         }
-        publishProgress(mPDFList);
+
+        if(!mPDFList.isEmpty()) {
+            publishProgress(mPDFList);
+        }
     }
 
     private void traversePath(File _Directory) throws IllegalArgumentException {

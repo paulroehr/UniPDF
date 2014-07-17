@@ -1,6 +1,7 @@
 package com.unipdf.app.vos;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 
 /**
@@ -8,9 +9,10 @@ import android.graphics.Bitmap;
  */
 public class ShufflePage {
 
-    public ShufflePage(Bitmap _thumbnail, int _page) {
+    public ShufflePage(Bitmap _thumbnail, int _page, Uri _path) {
         mThumbnail = _thumbnail;
         mPage = _page;
+        mPath = _path;
     }
 
     public Bitmap getThumbnail() {
@@ -29,7 +31,16 @@ public class ShufflePage {
         mPage = _page;
     }
 
+    public Uri getPath() {
+        return mPath;
+    }
+
+    public void setPath(Uri _path) {
+        mPath = _path;
+    }
+
     private Bitmap mThumbnail;
     private int mPage;
+    private Uri mPath;
 
 }

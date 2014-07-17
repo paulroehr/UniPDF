@@ -51,6 +51,7 @@ public class FileCrawlerService extends IntentService {
                         broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
                         broadcastIntent.putExtra(PARAM_SEND_PDFS, list);
                         sendBroadcast(broadcastIntent);
+
                         mFinder.clearPdfList();
                     }
 

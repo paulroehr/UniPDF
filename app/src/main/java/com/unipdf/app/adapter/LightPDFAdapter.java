@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.unipdf.app.R;
 import com.unipdf.app.vos.LightPDF;
@@ -59,7 +60,7 @@ public class LightPDFAdapter extends BaseAdapter{
         }
 
 //        holder.mImage.setImageURI(mLightPDFs.get(i).getmPicture());
-        holder.mName.setText((CharSequence) mLightPDFs.get(i).getmName());
+        holder.mName.setText(mLightPDFs.get(i).getmName());
 
         return row;
     }
@@ -75,4 +76,9 @@ public class LightPDFAdapter extends BaseAdapter{
         }
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        Collections.sort(mLightPDFs);
+        super.notifyDataSetChanged();
+    }
 }

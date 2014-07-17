@@ -1,6 +1,7 @@
 package com.unipdf.app.utils;
 
 import android.graphics.Bitmap;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -14,6 +15,8 @@ import android.view.View;
 
 import com.unipdf.app.Main;
 import com.unipdf.app.activities.WorkbenchActivity;
+import com.unipdf.app.models.ApplicationModel;
+import com.unipdf.app.vos.LightPDF;
 import com.unipdf.app.vos.ShufflePage;
 
 import org.vudroid.core.DecodeService;
@@ -38,7 +41,8 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
 
     List<ShufflePage> mPages;
     IPDFCreatorListener mListener;
-    Uri mPath;
+    Uri mOldPath = null;
+    String mPDFName;
     WorkbenchActivity activity;
 
     /** The decode service used for decoding the PDF */
@@ -48,16 +52,16 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
         mListener = _listener;
     }
 
-    public void setPath(Uri _path) {
-        mPath = _path;
-    }
-
     public void setPages(List<ShufflePage> _pages) {
         mPages = _pages;
     }
 
     public void setActivity(WorkbenchActivity _activity) {
         activity = _activity;
+    }
+
+    public void setPDFName(String _PDFName) {
+        mPDFName = _PDFName;
     }
 
     @Override
@@ -74,13 +78,18 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
         decodeService.setContentResolver(Main.getAppContext().getContentResolver());
 
         try {
-            decodeService.open(mPath);
 
             // PDF Dokument erstellen
             PdfDocument document = new PdfDocument();
 
             for (int i = 0; i < mPages.size(); i++) {
                 if (!isCancelled()) {
+
+                    Uri newPath = mPages.get(i).getPath();
+                    if(mOldPath == null || !mOldPath.equals(newPath)) {
+                        decodeService.open(newPath);
+                        mOldPath = newPath;
+                    }
                     int pageNumber = mPages.get(i).getPage();
                     CodecPage page = decodeService.getPage(pageNumber);
                     Bitmap pageBitmap = page.renderBitmap(decodeService.getPageWidth(pageNumber), decodeService.getPageHeight(pageNumber), new RectF(0, 0, 1, 1));
@@ -97,11 +106,15 @@ public class PDFCreator extends AsyncTask<String, Void, Boolean> {
                 }
             }
 
-            OutputStream os = new FileOutputStream(file.getPath() + File.separator + "test.pdf");
+            String path = file.getPath() + File.separator + mPDFName + ".pdf";
+            OutputStream os = new FileOutputStream(path);
             // write the document content
             document.writeTo(os);
             //close the document
             document.close();
+
+            LightPDF lightPDF = new LightPDF(null, mPDFName + ".pdf", Uri.fromFile(new File(path)));
+            ApplicationModel.getInstance().getPDFs().add(lightPDF);
         }
         catch (Exception e) {
 

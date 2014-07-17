@@ -6,11 +6,13 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -21,6 +23,7 @@ import com.unipdf.app.R;
 import com.unipdf.app.adapter.ImageAdapter;
 import com.unipdf.app.adapter.ShufflePageAdapter;
 import com.unipdf.app.dialogs.LoadingDialog;
+import com.unipdf.app.models.ApplicationModel;
 import com.unipdf.app.utils.PDFCreator;
 import com.unipdf.app.utils.ThumbnailLoader;
 import com.unipdf.app.vos.LightPDF;
@@ -33,8 +36,10 @@ import java.util.Collections;
 
 public class WorkbenchActivity extends Activity {
 
-    LightPDF mPDF;
-    File     mFileSrc;
+    private ApplicationModel mModel;
+
+    private LightPDF mPDF;
+    private File     mFileSrc;
 
     private PDFView  mPDFView;
     private ListView mThumbnailList;
@@ -50,10 +55,9 @@ public class WorkbenchActivity extends Activity {
     private int mCurrentPage = 0;
     private int mCurrentShuffle = -1;
     private ArrayList<Bitmap>       mThumbnails;
-    private ArrayList<ShufflePage>  mShuffleThumbnails;
     private ThumbnailLoader         mThumbnailLoader;
     private ImageAdapter            mThumbnailAdapter;
-    private ShufflePageAdapter          mShufflePageAdapter;
+    private ShufflePageAdapter      mShufflePageAdapter;
 
     private LoadingDialog           mLoadingDialog;
     private PDFCreator              mPDFCreator;
@@ -65,6 +69,8 @@ public class WorkbenchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workbench);
+
+        mModel = ApplicationModel.getInstance();
 
         mPDF = getIntent().getParcelableExtra(ExplorerActivity.EXTRA_CHOSEN_PDF);
 
@@ -110,10 +116,9 @@ public class WorkbenchActivity extends Activity {
         mThumbnailLoader.execute(new String[]{});
 
         mThumbnails = new ArrayList<Bitmap>();
-        mShuffleThumbnails = new ArrayList<ShufflePage>();
 
-        mThumbnailAdapter  = new ImageAdapter(this, mThumbnails);
-        mShufflePageAdapter    = new ShufflePageAdapter(this, mShuffleThumbnails);
+        mThumbnailAdapter   = new ImageAdapter(this, mThumbnails);
+        mShufflePageAdapter = new ShufflePageAdapter(this, mModel.getShuffleThumbnails());
 
         mThumbnailList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         mThumbnailList.setAdapter(mThumbnailAdapter);
@@ -121,12 +126,7 @@ public class WorkbenchActivity extends Activity {
         mShuffleList.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         mShuffleList.setAdapter(mShufflePageAdapter);
 
-        mPDFView.fromFile(mFileSrc)
-                .onPageChange(mPageChangeListener)
-                .defaultPage(1)
-                .showMinimap(true)
-                .enableSwipe(true)
-                .load();
+       initializePDFView();
 
         mThumbnailList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -167,11 +167,20 @@ public class WorkbenchActivity extends Activity {
         if (id == R.id.action_accept) {
             // Page aus Dokument holen und als PDPage speichern.
 
-            mShuffleThumbnails.add(new ShufflePage(mThumbnails.get(mCurrentPage), mCurrentPage));
+            mModel.getShuffleThumbnails().add(new ShufflePage(mThumbnails.get(mCurrentPage), mCurrentPage, mPDF.getFilePath()));
             mShufflePageAdapter.notifyDataSetChanged();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void initializePDFView() {
+        mPDFView.fromFile(mFileSrc)
+                .onPageChange(mPageChangeListener)
+                .defaultPage(mCurrentPage+1)
+                .showMinimap(true)
+                .enableSwipe(true)
+                .load();
     }
 
     private void switchVisibility(boolean _showLoading) {
@@ -186,17 +195,17 @@ public class WorkbenchActivity extends Activity {
     }
 
     private void swapThumbnails(boolean _swapUp) {
-        if(!mShuffleThumbnails.isEmpty() && mCurrentShuffle >= 0) {
+        if(!mModel.getShuffleThumbnails().isEmpty() && mCurrentShuffle >= 0) {
             if (_swapUp) {
                 if (mCurrentShuffle != 0) {
-                    Collections.swap(mShuffleThumbnails, mCurrentShuffle, mCurrentShuffle - 1);
+                    Collections.swap(mModel.getShuffleThumbnails(), mCurrentShuffle, mCurrentShuffle - 1);
                     mShufflePageAdapter.notifyDataSetChanged();
                     mShuffleList.setItemChecked(mCurrentShuffle - 1, true);
                     mCurrentShuffle -= 1;
                 }
             } else {
-                if (mCurrentShuffle < mShuffleThumbnails.size() - 1) {
-                    Collections.swap(mShuffleThumbnails, mCurrentShuffle, mCurrentShuffle + 1);
+                if (mCurrentShuffle < mModel.getShuffleThumbnails().size() - 1) {
+                    Collections.swap(mModel.getShuffleThumbnails(), mCurrentShuffle, mCurrentShuffle + 1);
                     mShufflePageAdapter.notifyDataSetChanged();
                     mShuffleList.setItemChecked(mCurrentShuffle + 1, true);
                     mCurrentShuffle += 1;
@@ -206,13 +215,27 @@ public class WorkbenchActivity extends Activity {
         }
     }
 
-    private void generateNewPDF() {
+    private void generateNewPDF(String _name) {
         mPDFCreator = new PDFCreator();
         mPDFCreator.setListener(mCreatorListener);
-        mPDFCreator.setPath(Uri.fromFile(mFileSrc));
+        mPDFCreator.setPDFName(_name);
         mPDFCreator.setActivity(WorkbenchActivity.this);
-        mPDFCreator.setPages(mShuffleThumbnails);
+        mPDFCreator.setPages(mModel.getShuffleThumbnails());
         mPDFCreator.execute(new String[]{});
+    }
+
+    private void buildNewPDF(String _name) {
+        mPDFView.recycle();
+        mLoadingDialog = new LoadingDialog();
+        mLoadingDialog.show(getFragmentManager(), "loadingDialog");
+        generateNewPDF(_name);
+    }
+
+    private void clearShuffleList() {
+        mShuffleList.setItemChecked(mCurrentShuffle, false);
+        mCurrentShuffle = -1;
+        mModel.getShuffleThumbnails().clear();
+        mShufflePageAdapter.notifyDataSetChanged();
     }
 
     private ThumbnailLoader.IThumbnailLoaderListener mLoaderListener = new ThumbnailLoader.IThumbnailLoaderListener() {
@@ -234,6 +257,8 @@ public class WorkbenchActivity extends Activity {
         @Override
         public void onFinish() {
             mLoadingDialog.dismiss();
+            clearShuffleList();
+            initializePDFView();
         }
     };
 
@@ -267,10 +292,7 @@ public class WorkbenchActivity extends Activity {
                     .setCancelable(false)
                     .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id) {
-                            mShuffleList.setItemChecked(mCurrentShuffle, false);
-                            mCurrentShuffle = -1;
-                            mShuffleThumbnails.clear();
-                            mShufflePageAdapter.notifyDataSetChanged();
+                            clearShuffleList();
                         }
                     })
                     .setNegativeButton("No",new DialogInterface.OnClickListener() {
@@ -293,11 +315,26 @@ public class WorkbenchActivity extends Activity {
     private View.OnClickListener mSaveListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!mShuffleThumbnails.isEmpty()) {
-                mPDFView.recycle();
-                mLoadingDialog = new LoadingDialog();
-                mLoadingDialog.show(getFragmentManager(), "loadingDialog");
-                generateNewPDF();
+            if(!mModel.getShuffleThumbnails().isEmpty()) {
+                final EditText input = new EditText(WorkbenchActivity.this);
+
+                new AlertDialog.Builder(WorkbenchActivity.this)
+                        .setTitle("Create PDF")
+                        .setMessage("Choose a name for your new PDF")
+                        .setView(input)
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String value = input.getText().toString();
+                                buildNewPDF(value);
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Do nothing.
+                    }
+                }).show();
+
+
             }
         }
     };
@@ -307,7 +344,7 @@ public class WorkbenchActivity extends Activity {
         public void onClick(View v) {
             if(mCurrentShuffle >= 0) {
                 mShuffleList.setItemChecked(mCurrentShuffle, false);
-                mShuffleThumbnails.remove(mCurrentShuffle);
+                mModel.getShuffleThumbnails().remove(mCurrentShuffle);
                 mShufflePageAdapter.notifyDataSetChanged();
                 mCurrentShuffle = -1;
             }
